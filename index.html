@@ -141,11 +141,6 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
         }
 
-        .phase-waiting {
-            background: linear-gradient(135deg, #ffd700, #f39c12) !important;
-            color: #000 !important;
-        }
-
         /* MASSIVE CHART SECTION - This is the star! */
         .chart-section {
             background: rgba(0, 0, 0, 0.7) !important;
@@ -554,6 +549,16 @@
                 opacity: 0;
             }
         }
+
+        /* NEW: Instant transition animations */
+        .round-transition {
+            animation: newRoundFlash 0.5s ease-out;
+        }
+
+        @keyframes newRoundFlash {
+            0% { background-color: rgba(78, 205, 196, 0.3); }
+            100% { background-color: transparent; }
+        }
     </style>
 </head>
 <body>
@@ -603,7 +608,7 @@
                     </div>
                     <div class="pot-item dump">
                         <div class="pot-emoji">📉</div>
-                        <div class="pot-amount" id="dumpAmount">0.000</div>
+                        <div class="div-amount" id="dumpAmount">0.000</div>
                         <div class="pot-percentage" id="dumpPercent">0%</div>
                     </div>
                 </div>
@@ -651,7 +656,7 @@
     </div>
 
     <script>
-        console.log('🎰 Chart-Focused Pump or Dump Starting...');
+        console.log('🎰 INSTANT Pump or Dump Starting...');
 
         // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
@@ -857,9 +862,10 @@
                 tg.HapticFeedback.impactOccurred('heavy');
             }
             
+            // SHORTENED: Show result for only 2 seconds instead of 3
             setTimeout(() => {
                 overlay.style.display = 'none';
-            }, 3000);
+            }, 2000);
         }
 
         // Game logic
@@ -888,9 +894,6 @@
                     break;
                 case 'revealing':
                     phaseIndicator.textContent = '🎲 Revealing';
-                    break;
-                case 'waiting':
-                    phaseIndicator.textContent = '⏳ Waiting';
                     break;
             }
             
@@ -994,19 +997,30 @@
             }, 300);
         }
 
-        // Game simulation
+        // NEW: Instant round transition animation
+        function showRoundTransition() {
+            const roundStatus = document.querySelector('.round-status');
+            roundStatus.classList.add('round-transition');
+            setTimeout(() => {
+                roundStatus.classList.remove('round-transition');
+            }, 500);
+        }
+
+        // FIXED: Game simulation with NO DELAYS!
         function simulateGame() {
             setInterval(() => {
                 if (gameState.timeLeft > 0) {
                     gameState.timeLeft--;
                 } else {
                     if (gameState.phase === 'betting') {
+                        // Start revealing phase - 10 seconds
                         gameState.phase = 'revealing';
-                        gameState.timeLeft = 10; // SHORTENED from 15s to 10s - more exciting!
+                        gameState.timeLeft = 10;
                         
                         const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
                         animateChart(result);
                         
+                        // Calculate winnings during reveal
                         if (gameState.userBet) {
                             const won = gameState.userBet.type === result;
                             if (won) {
@@ -1030,12 +1044,16 @@
                         }
                         
                     } else if (gameState.phase === 'revealing') {
-                        gameState.phase = 'waiting';
-                        gameState.timeLeft = 3; // SHORTENED from 5s to 3s - faster rounds!
+                        // INSTANT TRANSITION! No waiting phase!
+                        // Directly start the next round
+                        gameState.round++;
+                        gameState.phase = 'betting';
+                        gameState.timeLeft = 20;
                         
+                        // Add result to history
                         const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
                         gameState.recentResults.unshift({
-                            round: gameState.round,
+                            round: gameState.round - 1,
                             result: result,
                             pot: (gameState.pumpPot + gameState.dumpPot).toFixed(2)
                         });
@@ -1044,17 +1062,19 @@
                             gameState.recentResults.pop();
                         }
                         
-                        updateRecentResults();
-                        
-                    } else if (gameState.phase === 'waiting') {
-                        gameState.round++;
-                        gameState.phase = 'betting';
-                        gameState.timeLeft = 20;
+                        // Reset for new round
                         gameState.pumpPot = 0;
                         gameState.dumpPot = 0;
                         gameState.playerCount = 0;
                         gameState.userBet = null;
                         
+                        // Update results display
+                        updateRecentResults();
+                        
+                        // Show instant transition animation
+                        showRoundTransition();
+                        
+                        // Generate new chart
                         if (chart) {
                             const newData = generateChartData();
                             chart.data.datasets[0].data = newData.values;
@@ -1063,9 +1083,12 @@
                             chart.data.datasets[0].borderWidth = 5;
                             chart.update();
                         }
+                        
+                        console.log('🚀 INSTANT ROUND TRANSITION! No delays!');
                     }
                 }
                 
+                // Simulate other players betting during betting phase
                 if (gameState.phase === 'betting' && Math.random() < 0.5) {
                     const betAmount = 0.05 + Math.random() * 2;
                     if (Math.random() > 0.5) {
@@ -1085,7 +1108,7 @@
             initTelegramWebApp();
             
             if (initChart()) {
-                console.log('✅ Chart-focused layout ready');
+                console.log('✅ INSTANT Chart-focused layout ready');
                 
                 // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -1146,7 +1169,7 @@
                     
                 }, 1000);
                 
-                console.log('🚀 CHART-FOCUSED game ready! Chart should be MASSIVE and visible!');
+                console.log('🚀 INSTANT game ready! NO MORE DELAYS between rounds!');
             }
         });
     </script>
