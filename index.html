@@ -1002,7 +1002,7 @@
                 } else {
                     if (gameState.phase === 'betting') {
                         gameState.phase = 'revealing';
-                        gameState.timeLeft = 15;
+                        gameState.timeLeft = 10; // SHORTENED from 15s to 10s - more exciting!
                         
                         const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
                         animateChart(result);
@@ -1031,7 +1031,7 @@
                         
                     } else if (gameState.phase === 'revealing') {
                         gameState.phase = 'waiting';
-                        gameState.timeLeft = 5;
+                        gameState.timeLeft = 3; // SHORTENED from 5s to 3s - faster rounds!
                         
                         const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
                         gameState.recentResults.unshift({
