@@ -28,35 +28,8 @@
             left: 0;
         }
 
-        /* Force dark background regardless of Telegram theme */
         body {
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) !important;
-        }
-
-        /* Override any Telegram theme variables */
-        :root {
-            --tg-color-scheme: dark !important;
-        }
-
-        /* Animated background overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
-            animation: backgroundPulse 6s ease-in-out infinite alternate;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        @keyframes backgroundPulse {
-            0% { opacity: 0.4; }
-            100% { opacity: 0.1; }
         }
 
         .webapp-container {
@@ -68,27 +41,28 @@
             background: transparent;
         }
 
-        /* Header - Fixed layout with timer on right */
+        /* Compact Header - Minimal height */
         .header {
-            background: rgba(0, 0, 0, 0.8) !important;
+            background: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(20px);
-            padding: 12px 20px;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 100;
+            min-height: 50px;
         }
 
         .header h1 {
-            font-size: 1.4em;
+            font-size: 1.2em;
             font-weight: 800;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
-            background-size: 300% 300%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: gradientShift 4s ease infinite;
+            animation: gradientShift 3s ease infinite;
         }
 
         @keyframes gradientShift {
@@ -98,133 +72,112 @@
 
         .header-right {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
         }
 
         .timer-header {
-            font-size: 1.6em;
+            font-size: 1.4em;
             font-weight: 900;
             color: #ff4757 !important;
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
-            animation: timerPulse 1s infinite;
-        }
-
-        @keyframes timerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.8);
         }
 
         .balance {
             background: rgba(255, 215, 0, 0.2) !important;
-            padding: 4px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 215, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
             font-weight: bold;
             color: #ffd700 !important;
-            font-size: 0.85em;
+            font-size: 0.8em;
         }
 
-        /* Game Area - Force dark */
+        /* Game Area - Maximum space for chart */
         .game-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 12px;
-            gap: 12px;
+            padding: 8px;
+            gap: 8px;
             overflow-y: auto;
             background: transparent;
         }
 
-        /* All Cards - Force dark backgrounds */
-        .round-status, .chart-section, .pot-section, .results-section {
-            background: rgba(0, 0, 0, 0.4) !important;
-            border-radius: 18px;
-            padding: 16px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: white !important;
+        /* Minimal Round Status */
+        .round-status {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 40px;
         }
 
         .round-number {
-            font-size: 1.1em;
+            font-size: 0.9em;
             color: #ffd700 !important;
-            margin-bottom: 8px;
             font-weight: bold;
         }
 
         .phase-indicator {
-            font-size: 1.2em;
-            font-weight: 700;
+            font-size: 0.8em;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 8px;
             color: white !important;
         }
 
         .phase-betting {
             background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
-            animation: phaseGlow 2s ease-in-out infinite alternate;
         }
 
         .phase-revealing {
             background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
-            animation: phaseGlow 1s ease-in-out infinite alternate;
         }
 
         .phase-waiting {
             background: linear-gradient(135deg, #ffd700, #f39c12) !important;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            animation: phaseGlow 3s ease-in-out infinite alternate;
             color: #000 !important;
         }
 
-        @keyframes phaseGlow {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.02); }
-        }
-
-        .timer {
-            font-size: 2.2em;
-            font-weight: 900;
-            color: #ff4757 !important;
-            text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
-            animation: timerPulse 1s infinite;
-        }
-
-        @keyframes timerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        /* Chart Container - Much bigger and more space */
+        /* MASSIVE CHART SECTION - This is the star! */
         .chart-section {
-            background: rgba(0, 0, 0, 0.6) !important;
-            height: 320px;
-            overflow: hidden;
+            background: rgba(0, 0, 0, 0.7) !important;
+            border-radius: 15px;
+            padding: 10px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(78, 205, 196, 0.3);
             position: relative;
-            margin: 20px 0;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            
+            /* HUGE HEIGHT - Takes up most of the screen */
+            height: calc(100vh - 300px);
+            min-height: 350px;
+            max-height: 500px;
+            
+            overflow: hidden;
+            margin: 5px 0;
         }
 
         .chart-wrapper {
             position: relative;
             height: 100%;
+            width: 100%;
             z-index: 2;
             background: transparent;
         }
 
-        /* Force chart canvas to be visible */
+        /* Enhanced chart visibility */
         #priceChart {
             background: transparent !important;
-            filter: brightness(1.2) contrast(1.2);
+            filter: brightness(1.3) contrast(1.3) saturate(1.2);
+            width: 100% !important;
+            height: 100% !important;
         }
 
         .chart-overlay {
@@ -238,9 +191,9 @@
         }
 
         .chart-result {
-            font-size: 3em;
+            font-size: 4em;
             font-weight: 900;
-            text-shadow: 0 0 30px currentColor;
+            text-shadow: 0 0 40px currentColor;
             animation: resultExplosion 2s ease-out;
         }
 
@@ -258,7 +211,7 @@
                 opacity: 0;
             }
             30% {
-                transform: scale(1.2) rotate(0deg);
+                transform: scale(1.3) rotate(0deg);
                 opacity: 1;
             }
             100% {
@@ -267,15 +220,15 @@
             }
         }
 
-        /* User bet status - Less prominent */
+        /* Compact user bet status */
         .user-bet-status {
-            background: rgba(255, 215, 0, 0.1) !important;
+            background: rgba(255, 215, 0, 0.15) !important;
             border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 12px;
-            padding: 8px 12px;
+            border-radius: 10px;
+            padding: 6px 10px;
             text-align: center;
-            margin: 8px 0;
-            font-size: 0.85em;
+            margin: 4px 0;
+            font-size: 0.8em;
             color: white !important;
         }
 
@@ -283,30 +236,35 @@
             display: none;
         }
 
-        /* Pot titles and text */
-        .pot-title, .results-title {
+        /* Compact Pot Display */
+        .pot-section {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pot-title {
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1em;
             color: #ffd700 !important;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: bold;
         }
 
         .pot-display {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .pot-item {
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: rgba(0, 0, 0, 0.3) !important;
-            border-radius: 12px;
+            border-radius: 10px;
             border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
             color: white !important;
         }
 
@@ -321,93 +279,60 @@
         }
 
         .pot-emoji {
-            font-size: 1.5em;
-            margin-bottom: 4px;
+            font-size: 1.2em;
+            margin-bottom: 2px;
         }
 
         .pot-amount {
-            font-size: 1.2em;
+            font-size: 1em;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: white !important;
         }
 
         .pot-percentage {
-            font-size: 0.8em;
+            font-size: 0.7em;
             opacity: 0.9;
             background: rgba(255, 255, 255, 0.2) !important;
-            padding: 2px 6px;
-            border-radius: 8px;
+            padding: 1px 4px;
+            border-radius: 6px;
             color: white !important;
         }
 
         .total-info {
             text-align: center;
-            padding-top: 12px;
+            padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: white !important;
         }
 
-        /* Custom Amount Input */
-        .custom-amount-section {
-            display: flex;
-            gap: 8px;
-            margin: 8px 0;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .custom-amount-input {
-            padding: 8px 12px;
+        /* Compact Bet Controls */
+        .bet-controls {
             background: rgba(0, 0, 0, 0.4) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            color: white !important;
-            font-size: 0.9em;
-            width: 140px;
-            text-align: center;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .custom-amount-input::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        .custom-amount-btn {
-            padding: 8px 15px;
-            background: rgba(255, 215, 0, 0.2) !important;
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 12px;
-            color: #ffd700 !important;
-            font-size: 0.85em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .custom-amount-btn:hover {
-            background: rgba(255, 215, 0, 0.3) !important;
-        }
-
-        /* Bet Amount Selector */
         .bet-amount-selector {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin: 12px 0;
+            gap: 6px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
         }
 
         .amount-btn {
-            padding: 6px 12px;
+            padding: 4px 8px;
             background: rgba(0, 0, 0, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
+            border-radius: 8px;
             color: white !important;
-            font-size: 0.85em;
+            font-size: 0.75em;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
@@ -420,66 +345,105 @@
             font-weight: bold;
         }
 
-        /* Betting Buttons */
+        .custom-amount-section {
+            display: flex;
+            gap: 6px;
+            margin: 6px 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-amount-input {
+            padding: 4px 8px;
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white !important;
+            font-size: 0.75em;
+            width: 100px;
+            text-align: center;
+        }
+
+        .custom-amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .custom-amount-btn {
+            padding: 4px 8px;
+            background: rgba(255, 215, 0, 0.2) !important;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 8px;
+            color: #ffd700 !important;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        /* Compact Betting Buttons */
         .betting-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .bet-button {
-            padding: 16px;
+            padding: 12px;
             border: none;
-            border-radius: 16px;
-            font-size: 1.1em;
+            border-radius: 12px;
+            font-size: 1em;
             font-weight: bold;
             color: white !important;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
             border: 2px solid transparent;
+        }
+
+        .bet-button.pump {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+        }
+
+        .bet-button.dump {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .bet-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .bet-button:active {
             transform: scale(0.95);
         }
 
-        .bet-button.pump {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+        /* Minimal Recent Results */
+        .results-section {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .bet-button.pump:hover {
-            box-shadow: 0 0 25px rgba(78, 205, 196, 0.5);
-            transform: translateY(-2px);
+        .results-title {
+            text-align: center;
+            font-size: 0.9em;
+            color: #ffd700 !important;
+            margin-bottom: 6px;
+            font-weight: bold;
         }
 
-        .bet-button.dump {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
-            border-color: #ff6b6b;
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
-        }
-
-        .bet-button.dump:hover {
-            box-shadow: 0 0 25px rgba(255, 107, 107, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .bet-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* Recent Results */
         .results-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 160px;
+            gap: 4px;
+            max-height: 80px;
             overflow-y: auto;
         }
 
@@ -487,11 +451,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;
+            padding: 4px 8px;
             background: rgba(0, 0, 0, 0.3) !important;
-            border-radius: 10px;
-            font-size: 0.85em;
-            border-left: 3px solid transparent;
+            border-radius: 6px;
+            font-size: 0.7em;
+            border-left: 2px solid transparent;
             color: white !important;
         }
 
@@ -503,25 +467,15 @@
             border-left-color: #ff6b6b;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
-            padding: 16px;
+            padding: 8px;
             opacity: 0.8;
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: white !important;
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Haptic feedback styles */
+        /* Haptic feedback */
         .haptic-success {
             animation: successPulse 0.3s ease-out;
         }
@@ -532,27 +486,34 @@
             100% { transform: scale(1); }
         }
 
-        /* Responsive */
+        /* Mobile optimizations */
         @media (max-width: 480px) {
             .header {
-                padding: 8px 12px;
+                padding: 6px 10px;
+                min-height: 45px;
             }
             
             .header h1 {
+                font-size: 1.1em;
+            }
+            
+            .timer-header {
                 font-size: 1.2em;
             }
             
             .game-area {
-                padding: 8px;
-                gap: 8px;
-            }
-            
-            .timer {
-                font-size: 1.8em;
+                padding: 6px;
+                gap: 6px;
             }
             
             .chart-section {
-                height: 180px;
+                height: calc(100vh - 280px);
+                min-height: 300px;
+                padding: 8px;
+            }
+            
+            .chart-result {
+                font-size: 3em;
             }
         }
 
@@ -570,11 +531,11 @@
 
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.6), transparent);
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent);
             border-radius: 50%;
-            animation: particleFloat 8s infinite linear;
+            animation: particleFloat 10s infinite linear;
         }
 
         @keyframes particleFloat {
@@ -589,7 +550,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-10vh) translateX(100px) rotate(360deg);
+                transform: translateY(-10vh) translateX(50px) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -599,7 +560,7 @@
     <div class="floating-particles" id="particles"></div>
     
     <div class="webapp-container">
-        <!-- Header -->
+        <!-- Compact Header -->
         <div class="header">
             <h1>🎰 Pump or Dump</h1>
             <div class="header-right">
@@ -610,15 +571,13 @@
 
         <!-- Game Area -->
         <div class="game-area">
-            <!-- Round Status -->
+            <!-- Minimal Round Status -->
             <div class="round-status">
                 <div class="round-number" id="roundNumber">Round #1</div>
-                <div class="phase-indicator phase-betting" id="phaseIndicator">
-                    🎯 Betting Phase
-                </div>
+                <div class="phase-indicator phase-betting" id="phaseIndicator">🎯 Betting</div>
             </div>
 
-            <!-- Chart Section -->
+            <!-- MASSIVE CHART SECTION - THE STAR OF THE SHOW -->
             <div class="chart-section">
                 <div class="chart-overlay" id="chartOverlay" style="display: none;">
                     <div class="chart-result" id="chartResult"></div>
@@ -628,13 +587,12 @@
                 </div>
             </div>
 
-            <!-- User's Current Bet Status -->
+            <!-- Compact User Bet Status -->
             <div class="user-bet-status hidden" id="userBetStatus">
-                <div>Your Bet: <strong id="userBetDisplay">-</strong></div>
-                <div style="font-size: 0.8em; opacity: 0.8; margin-top: 4px;">Good luck! 🍀</div>
+                <strong id="userBetDisplay">-</strong> 🍀
             </div>
 
-            <!-- Pot Display -->
+            <!-- Compact Pot Display -->
             <div class="pot-section">
                 <div class="pot-title">💰 Live Pot</div>
                 <div class="pot-display">
@@ -655,44 +613,45 @@
                 </div>
             </div>
 
-            <!-- Bet Amount Selector -->
-            <div class="bet-amount-selector">
-                <div class="amount-btn" data-amount="0.01">0.01 SOL</div>
-                <div class="amount-btn active" data-amount="0.1">0.1 SOL</div>
-                <div class="amount-btn" data-amount="0.5">0.5 SOL</div>
-                <div class="amount-btn" data-amount="1.0">1.0 SOL</div>
-            </div>
-            
-            <!-- Custom Amount Input -->
-            <div class="custom-amount-section">
-                <input type="number" id="customAmount" placeholder="Enter custom amount" min="0.01" max="10" step="0.01" class="custom-amount-input">
-                <button class="custom-amount-btn" id="useCustomAmount">Use Custom</button>
+            <!-- Compact Betting Controls -->
+            <div class="bet-controls">
+                <!-- Bet Amount Selector -->
+                <div class="bet-amount-selector">
+                    <div class="amount-btn" data-amount="0.01">0.01</div>
+                    <div class="amount-btn active" data-amount="0.1">0.1</div>
+                    <div class="amount-btn" data-amount="0.5">0.5</div>
+                    <div class="amount-btn" data-amount="1.0">1.0</div>
+                </div>
+                
+                <!-- Custom Amount -->
+                <div class="custom-amount-section">
+                    <input type="number" id="customAmount" placeholder="Custom" min="0.01" max="10" step="0.01" class="custom-amount-input">
+                    <button class="custom-amount-btn" id="useCustomAmount">Use</button>
+                </div>
+
+                <!-- Betting Buttons -->
+                <div class="betting-section">
+                    <button class="bet-button pump" id="pumpButton" data-type="PUMP">
+                        📈 PUMP
+                    </button>
+                    <button class="bet-button dump" id="dumpButton" data-type="DUMP">
+                        📉 DUMP
+                    </button>
+                </div>
             </div>
 
-            <!-- Betting Buttons -->
-            <div class="betting-section">
-                <button class="bet-button pump" id="pumpButton" data-type="PUMP">
-                    📈 BET PUMP
-                    <div style="font-size: 0.75em; margin-top: 4px;">Chart goes UP</div>
-                </button>
-                <button class="bet-button dump" id="dumpButton" data-type="DUMP">
-                    📉 BET DUMP
-                    <div style="font-size: 0.75em; margin-top: 4px;">Chart goes DOWN</div>
-                </button>
-            </div>
-
-            <!-- Recent Results -->
+            <!-- Minimal Recent Results -->
             <div class="results-section">
-                <div class="results-title">📊 Recent Results</div>
+                <div class="results-title">📊 Recent</div>
                 <div class="results-list" id="resultsList">
-                    <div class="loading">Loading first round...</div>
+                    <div class="loading">Loading...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        console.log('🎰 Pump or Dump Game Starting...');
+        console.log('🎰 Chart-Focused Pump or Dump Starting...');
 
         // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
@@ -717,7 +676,6 @@
                 tg.expand();
                 tg.disableVerticalSwipes();
                 
-                // Force dark theme
                 if (tg.setBackgroundColor) {
                     tg.setBackgroundColor('#0f0f23');
                 }
@@ -737,7 +695,7 @@
             }
         }
 
-        // Chart functionality with enhanced visibility
+        // Enhanced Chart with maximum visibility
         const ctx = document.getElementById('priceChart').getContext('2d');
         let chart;
 
@@ -753,15 +711,15 @@
                             label: 'Price',
                             data: data.values,
                             borderColor: '#4ecdc4',
-                            backgroundColor: 'rgba(78, 205, 196, 0.15)',
-                            borderWidth: 4,
+                            backgroundColor: 'rgba(78, 205, 196, 0.2)',
+                            borderWidth: 5,
                             fill: true,
                             tension: 0.4,
                             pointRadius: 0,
-                            pointHoverRadius: 8,
+                            pointHoverRadius: 10,
                             pointBackgroundColor: '#4ecdc4',
                             pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2
+                            pointBorderWidth: 3
                         }]
                     },
                     options: {
@@ -787,7 +745,7 @@
                     }
                 });
                 
-                console.log('📊 Chart initialized with enhanced visibility');
+                console.log('📊 Chart initialized with MAXIMUM visibility');
                 return true;
             } catch (error) {
                 console.error('❌ Chart error:', error);
@@ -800,9 +758,9 @@
             const values = [];
             let currentPrice = 100;
             
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 60; i++) {
                 labels.push(i);
-                const change = (Math.random() - 0.5) * 6;
+                const change = (Math.random() - 0.5) * 8;
                 currentPrice += change;
                 currentPrice = Math.max(40, Math.min(160, currentPrice));
                 values.push(currentPrice);
@@ -817,21 +775,21 @@
             try {
                 const currentData = [...chart.data.datasets[0].data];
                 const lastValue = currentData[currentData.length - 1];
-                const change = (Math.random() - 0.5) * 8;
-                const newValue = Math.max(30, Math.min(170, lastValue + change));
+                const change = (Math.random() - 0.5) * 10;
+                const newValue = Math.max(20, Math.min(180, lastValue + change));
                 
                 currentData.shift();
                 currentData.push(newValue);
                 
                 chart.data.datasets[0].data = currentData;
                 
-                // Enhanced visibility with brighter colors
+                // Super bright colors for maximum visibility
                 if (newValue > lastValue) {
                     chart.data.datasets[0].borderColor = '#4ecdc4';
-                    chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.2)';
+                    chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.25)';
                 } else {
                     chart.data.datasets[0].borderColor = '#ff6b6b';
-                    chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.2)';
+                    chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.25)';
                 }
                 
                 chart.update('none');
@@ -844,7 +802,7 @@
             if (!chart) return;
             
             let step = 0;
-            const totalSteps = 18;
+            const totalSteps = 20;
             const startData = [...chart.data.datasets[0].data];
             
             const interval = setInterval(() => {
@@ -852,27 +810,27 @@
                     const progress = step / totalSteps;
                     const newData = [...startData];
                     
-                    for (let i = Math.floor(startData.length * 0.7); i < startData.length; i++) {
+                    for (let i = Math.floor(startData.length * 0.6); i < startData.length; i++) {
                         const baseValue = startData[i];
-                        const volatility = (Math.random() - 0.5) * 15;
+                        const volatility = (Math.random() - 0.5) * 20;
                         const trend = finalResult === 'PUMP' ? 1 : -1;
-                        const movement = Math.sin(progress * Math.PI) * 30 * trend;
+                        const movement = Math.sin(progress * Math.PI) * 40 * trend;
                         
-                        newData[i] = Math.max(20, Math.min(180, baseValue + volatility + movement));
+                        newData[i] = Math.max(10, Math.min(190, baseValue + volatility + movement));
                     }
                     
                     chart.data.datasets[0].data = newData;
                     
-                    // Bright colors for dramatic effect
+                    // Maximum contrast colors
                     if (finalResult === 'PUMP') {
                         chart.data.datasets[0].borderColor = '#4ecdc4';
-                        chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.3)';
+                        chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.4)';
                     } else {
                         chart.data.datasets[0].borderColor = '#ff6b6b';
-                        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.3)';
+                        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.4)';
                     }
                     
-                    chart.data.datasets[0].borderWidth = 5;
+                    chart.data.datasets[0].borderWidth = 6;
                     chart.update('none');
                     step++;
                     
@@ -883,7 +841,7 @@
                 } catch (error) {
                     clearInterval(interval);
                 }
-            }, 120);
+            }, 100);
         }
 
         function showResult(result) {
@@ -926,13 +884,13 @@
             
             switch(gameState.phase) {
                 case 'betting':
-                    phaseIndicator.textContent = '🎯 Betting Phase';
+                    phaseIndicator.textContent = '🎯 Betting';
                     break;
                 case 'revealing':
-                    phaseIndicator.textContent = '🎲 Revealing...';
+                    phaseIndicator.textContent = '🎲 Revealing';
                     break;
                 case 'waiting':
-                    phaseIndicator.textContent = '⏳ Waiting...';
+                    phaseIndicator.textContent = '⏳ Waiting';
                     break;
             }
             
@@ -960,13 +918,13 @@
                 return;
             }
             
-            gameState.recentResults.forEach(result => {
+            gameState.recentResults.slice(0, 5).forEach(result => {
                 const div = document.createElement('div');
                 div.className = `result-item ${result.result.toLowerCase()}`;
                 div.innerHTML = `
                     <span>#${result.round}</span>
-                    <span>${result.result === 'PUMP' ? '📈' : '📉'} ${result.result}</span>
-                    <span>${result.pot} SOL</span>
+                    <span>${result.result === 'PUMP' ? '📈' : '📉'}</span>
+                    <span>${result.pot}</span>
                 `;
                 container.appendChild(div);
             });
@@ -979,9 +937,9 @@
             
             if (gameState.userBalance < gameState.selectedAmount) {
                 if (tg?.showAlert) {
-                    tg.showAlert(`Insufficient balance! You need ${gameState.selectedAmount} SOL`);
+                    tg.showAlert(`Need ${gameState.selectedAmount} SOL!`);
                 } else {
-                    alert(`Insufficient balance! You need ${gameState.selectedAmount} SOL`);
+                    alert(`Need ${gameState.selectedAmount} SOL!`);
                 }
                 return;
             }
@@ -1015,25 +973,25 @@
             console.log(`💰 Bet placed: ${type} ${gameState.selectedAmount} SOL`);
         }
 
-        // Create particles
+        // Create subtle particles
         function createParticles() {
             const container = document.getElementById('particles');
             
             setInterval(() => {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.2) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
                     particle.style.left = Math.random() * 100 + 'vw';
-                    particle.style.animationDelay = Math.random() * 2 + 's';
-                    particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.animationDuration = (8 + Math.random() * 4) + 's';
                     
                     container.appendChild(particle);
                     
                     setTimeout(() => {
                         particle.remove();
-                    }, 12000);
+                    }, 15000);
                 }
-            }, 200);
+            }, 300);
         }
 
         // Game simulation
@@ -1079,10 +1037,10 @@
                         gameState.recentResults.unshift({
                             round: gameState.round,
                             result: result,
-                            pot: (gameState.pumpPot + gameState.dumpPot).toFixed(3)
+                            pot: (gameState.pumpPot + gameState.dumpPot).toFixed(2)
                         });
                         
-                        if (gameState.recentResults.length > 8) {
+                        if (gameState.recentResults.length > 10) {
                             gameState.recentResults.pop();
                         }
                         
@@ -1101,21 +1059,21 @@
                             const newData = generateChartData();
                             chart.data.datasets[0].data = newData.values;
                             chart.data.datasets[0].borderColor = '#4ecdc4';
-                            chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.15)';
-                            chart.data.datasets[0].borderWidth = 4;
+                            chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.2)';
+                            chart.data.datasets[0].borderWidth = 5;
                             chart.update();
                         }
                     }
                 }
                 
-                if (gameState.phase === 'betting' && Math.random() < 0.4) {
-                    const betAmount = 0.1 + Math.random() * 1.5;
+                if (gameState.phase === 'betting' && Math.random() < 0.5) {
+                    const betAmount = 0.05 + Math.random() * 2;
                     if (Math.random() > 0.5) {
                         gameState.pumpPot += betAmount;
                     } else {
                         gameState.dumpPot += betAmount;
                     }
-                    gameState.playerCount = Math.max(gameState.playerCount, Math.floor(Math.random() * 20) + 1);
+                    gameState.playerCount = Math.max(gameState.playerCount, Math.floor(Math.random() * 25) + 1);
                 }
                 
                 updateDisplay();
@@ -1127,7 +1085,7 @@
             initTelegramWebApp();
             
             if (initChart()) {
-                console.log('✅ Chart ready');
+                console.log('✅ Chart-focused layout ready');
                 
                 // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -1136,7 +1094,6 @@
                         btn.classList.add('active');
                         gameState.selectedAmount = parseFloat(btn.dataset.amount);
                         
-                        // Clear custom input
                         document.getElementById('customAmount').value = '';
                         
                         if (tg?.HapticFeedback) {
@@ -1151,12 +1108,9 @@
                     const customValue = parseFloat(customInput.value);
                     
                     if (customValue && customValue >= 0.01 && customValue <= 10) {
-                        // Remove active from all preset buttons
                         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
-                        
                         gameState.selectedAmount = customValue;
                         
-                        // Visual feedback
                         document.getElementById('useCustomAmount').style.background = 'rgba(78, 205, 196, 0.3)';
                         setTimeout(() => {
                             document.getElementById('useCustomAmount').style.background = 'rgba(255, 215, 0, 0.2)';
@@ -1169,9 +1123,9 @@
                         console.log(`Custom amount set: ${customValue} SOL`);
                     } else {
                         if (tg?.showAlert) {
-                            tg.showAlert('Please enter amount between 0.01 and 10 SOL');
+                            tg.showAlert('Enter 0.01 to 10 SOL');
                         } else {
-                            alert('Please enter amount between 0.01 and 10 SOL');
+                            alert('Enter 0.01 to 10 SOL');
                         }
                     }
                 });
@@ -1188,11 +1142,11 @@
                         if (gameState.phase === 'betting') {
                             moveChart();
                         }
-                    }, 800);
+                    }, 600);
                     
                 }, 1000);
                 
-                console.log('🚀 Game ready with dark theme!');
+                console.log('🚀 CHART-FOCUSED game ready! Chart should be MASSIVE and visible!');
             }
         });
     </script>
