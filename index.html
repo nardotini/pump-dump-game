@@ -68,7 +68,7 @@
             background: transparent;
         }
 
-        /* Header - Force dark colors */
+        /* Header - Fixed layout with timer on right */
         .header {
             background: rgba(0, 0, 0, 0.8) !important;
             backdrop-filter: blur(20px);
@@ -96,11 +96,24 @@
             50% { background-position: 100% 50%; }
         }
 
-        .user-info {
+        .header-right {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85em;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .timer-header {
+            font-size: 1.6em;
+            font-weight: 900;
+            color: #ff4757 !important;
+            text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
+            animation: timerPulse 1s infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
 
         .balance {
@@ -110,7 +123,7 @@
             border: 1px solid rgba(255, 215, 0, 0.5);
             font-weight: bold;
             color: #ffd700 !important;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
         /* Game Area - Force dark */
@@ -191,13 +204,14 @@
             50% { transform: scale(1.08); }
         }
 
-        /* Chart Container - Bigger and more visible */
+        /* Chart Container - Much bigger and more space */
         .chart-section {
             background: rgba(0, 0, 0, 0.6) !important;
-            height: 280px;
+            height: 320px;
             overflow: hidden;
             position: relative;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .chart-wrapper {
@@ -253,15 +267,15 @@
             }
         }
 
-        /* User bet status */
+        /* User bet status - Less prominent */
         .user-bet-status {
-            background: rgba(255, 215, 0, 0.15) !important;
-            border: 1px solid rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.1) !important;
+            border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 12px;
-            padding: 12px;
+            padding: 8px 12px;
             text-align: center;
             margin: 8px 0;
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: white !important;
         }
 
@@ -588,7 +602,8 @@
         <!-- Header -->
         <div class="header">
             <h1>🎰 Pump or Dump</h1>
-            <div class="user-info">
+            <div class="header-right">
+                <div class="timer-header" id="timer">20s</div>
                 <div class="balance" id="userBalance">10.000 SOL</div>
             </div>
         </div>
@@ -601,7 +616,6 @@
                 <div class="phase-indicator phase-betting" id="phaseIndicator">
                     🎯 Betting Phase
                 </div>
-                <div class="timer" id="timer">20s</div>
             </div>
 
             <!-- Chart Section -->
