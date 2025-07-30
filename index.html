@@ -16,10 +16,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        html, body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            color: white;
+            background: #0f0f23 !important;
+            color: white !important;
             overflow-x: hidden;
             height: 100vh;
             position: fixed;
@@ -28,7 +28,17 @@
             left: 0;
         }
 
-        /* Animated background */
+        /* Force dark background regardless of Telegram theme */
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) !important;
+        }
+
+        /* Override any Telegram theme variables */
+        :root {
+            --tg-color-scheme: dark !important;
+        }
+
+        /* Animated background overlay */
         body::before {
             content: '';
             position: fixed;
@@ -41,6 +51,7 @@
                 radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
             animation: backgroundPulse 6s ease-in-out infinite alternate;
             z-index: -1;
+            pointer-events: none;
         }
 
         @keyframes backgroundPulse {
@@ -54,17 +65,18 @@
             flex-direction: column;
             position: relative;
             z-index: 1;
+            background: transparent;
         }
 
-        /* Header */
+        /* Header - Force dark colors */
         .header {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.8) !important;
             backdrop-filter: blur(20px);
             padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 100;
         }
 
@@ -92,16 +104,16 @@
         }
 
         .balance {
-            background: rgba(255, 215, 0, 0.15);
+            background: rgba(255, 215, 0, 0.2) !important;
             padding: 4px 10px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.5);
             font-weight: bold;
-            color: #ffd700;
+            color: #ffd700 !important;
             font-size: 0.9em;
         }
 
-        /* Game Area */
+        /* Game Area - Force dark */
         .game-area {
             flex: 1;
             display: flex;
@@ -109,21 +121,22 @@
             padding: 12px;
             gap: 12px;
             overflow-y: auto;
+            background: transparent;
         }
 
-        /* Round Status */
-        .round-status {
-            background: rgba(255, 255, 255, 0.06);
+        /* All Cards - Force dark backgrounds */
+        .round-status, .chart-section, .pot-section, .results-section {
+            background: rgba(0, 0, 0, 0.4) !important;
             border-radius: 18px;
             padding: 16px;
-            text-align: center;
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
         }
 
         .round-number {
             font-size: 1.1em;
-            color: #ffd700;
+            color: #ffd700 !important;
             margin-bottom: 8px;
             font-weight: bold;
         }
@@ -138,24 +151,26 @@
             margin-bottom: 8px;
             position: relative;
             overflow: hidden;
+            color: white !important;
         }
 
         .phase-betting {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
             box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
             animation: phaseGlow 2s ease-in-out infinite alternate;
         }
 
         .phase-revealing {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
             box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
             animation: phaseGlow 1s ease-in-out infinite alternate;
         }
 
         .phase-waiting {
-            background: linear-gradient(135deg, #ffd700, #f39c12);
+            background: linear-gradient(135deg, #ffd700, #f39c12) !important;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
             animation: phaseGlow 3s ease-in-out infinite alternate;
+            color: #000 !important;
         }
 
         @keyframes phaseGlow {
@@ -166,7 +181,7 @@
         .timer {
             font-size: 2.2em;
             font-weight: 900;
-            color: #ff4757;
+            color: #ff4757 !important;
             text-shadow: 0 0 15px rgba(255, 71, 87, 0.8);
             animation: timerPulse 1s infinite;
         }
@@ -176,22 +191,26 @@
             50% { transform: scale(1.08); }
         }
 
-        /* Chart Container */
+        /* Chart Container - Bigger and more visible */
         .chart-section {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 18px;
-            padding: 16px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            height: 220px;
+            background: rgba(0, 0, 0, 0.6) !important;
+            height: 280px;
             overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
         }
 
         .chart-wrapper {
             position: relative;
             height: 100%;
             z-index: 2;
+            background: transparent;
+        }
+
+        /* Force chart canvas to be visible */
+        #priceChart {
+            background: transparent !important;
+            filter: brightness(1.2) contrast(1.2);
         }
 
         .chart-overlay {
@@ -212,11 +231,11 @@
         }
 
         .chart-result.pump {
-            color: #4ecdc4;
+            color: #4ecdc4 !important;
         }
 
         .chart-result.dump {
-            color: #ff6b6b;
+            color: #ff6b6b !important;
         }
 
         @keyframes resultExplosion {
@@ -234,34 +253,27 @@
             }
         }
 
-        /* User's bet indicator */
+        /* User bet status */
         .user-bet-status {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.15) !important;
+            border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 12px;
             padding: 12px;
             text-align: center;
             margin: 8px 0;
             font-size: 0.9em;
+            color: white !important;
         }
 
         .user-bet-status.hidden {
             display: none;
         }
 
-        /* Pot Display */
-        .pot-section {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 18px;
-            padding: 16px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .pot-title {
+        /* Pot titles and text */
+        .pot-title, .results-title {
             text-align: center;
             font-size: 1.2em;
-            color: #ffd700;
+            color: #ffd700 !important;
             margin-bottom: 12px;
             font-weight: bold;
         }
@@ -276,21 +288,22 @@
         .pot-item {
             text-align: center;
             padding: 12px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(0, 0, 0, 0.3) !important;
             border-radius: 12px;
             border: 2px solid transparent;
             position: relative;
             overflow: hidden;
+            color: white !important;
         }
 
         .pot-item.pump {
-            border-color: #4ecdc4;
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(78, 205, 196, 0.05));
+            border-color: #4ecdc4 !important;
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.1)) !important;
         }
 
         .pot-item.dump {
-            border-color: #ff6b6b;
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+            border-color: #ff6b6b !important;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.1)) !important;
         }
 
         .pot-emoji {
@@ -302,24 +315,67 @@
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 4px;
+            color: white !important;
         }
 
         .pot-percentage {
             font-size: 0.8em;
-            opacity: 0.8;
-            background: rgba(255, 255, 255, 0.1);
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2) !important;
             padding: 2px 6px;
             border-radius: 8px;
+            color: white !important;
         }
 
         .total-info {
             text-align: center;
             padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.9em;
+            color: white !important;
+        }
+
+        /* Custom Amount Input */
+        .custom-amount-section {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-amount-input {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white !important;
+            font-size: 0.9em;
+            width: 140px;
+            text-align: center;
+        }
+
+        .custom-amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .custom-amount-btn {
+            padding: 8px 15px;
+            background: rgba(255, 215, 0, 0.2) !important;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 12px;
+            color: #ffd700 !important;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .custom-amount-btn:hover {
+            background: rgba(255, 215, 0, 0.3) !important;
         }
 
         /* Bet Amount Selector */
@@ -333,10 +389,10 @@
 
         .amount-btn {
             padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            color: white;
+            color: white !important;
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -344,8 +400,8 @@
         }
 
         .amount-btn.active {
-            background: #ffd700;
-            color: #000;
+            background: #ffd700 !important;
+            color: #000 !important;
             border-color: #ffd700;
             font-weight: bold;
         }
@@ -363,7 +419,7 @@
             border-radius: 16px;
             font-size: 1.1em;
             font-weight: bold;
-            color: white;
+            color: white !important;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -377,7 +433,7 @@
         }
 
         .bet-button.pump {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
             border-color: #4ecdc4;
             box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
         }
@@ -388,7 +444,7 @@
         }
 
         .bet-button.dump {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
             border-color: #ff6b6b;
             box-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
         }
@@ -405,22 +461,6 @@
         }
 
         /* Recent Results */
-        .results-section {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 18px;
-            padding: 16px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .results-title {
-            text-align: center;
-            font-size: 1.1em;
-            color: #ffd700;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-
         .results-list {
             display: flex;
             flex-direction: column;
@@ -434,10 +474,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(0, 0, 0, 0.3) !important;
             border-radius: 10px;
             font-size: 0.85em;
             border-left: 3px solid transparent;
+            color: white !important;
         }
 
         .result-item.pump {
@@ -448,12 +489,13 @@
             border-left-color: #ff6b6b;
         }
 
-        /* Loading and animations */
+        /* Loading */
         .loading {
             text-align: center;
             padding: 16px;
-            opacity: 0.7;
+            opacity: 0.8;
             font-size: 0.9em;
+            color: white !important;
         }
 
         .pulse {
@@ -601,10 +643,16 @@
 
             <!-- Bet Amount Selector -->
             <div class="bet-amount-selector">
+                <div class="amount-btn" data-amount="0.01">0.01 SOL</div>
                 <div class="amount-btn active" data-amount="0.1">0.1 SOL</div>
                 <div class="amount-btn" data-amount="0.5">0.5 SOL</div>
                 <div class="amount-btn" data-amount="1.0">1.0 SOL</div>
-                <div class="amount-btn" data-amount="2.0">2.0 SOL</div>
+            </div>
+            
+            <!-- Custom Amount Input -->
+            <div class="custom-amount-section">
+                <input type="number" id="customAmount" placeholder="Enter custom amount" min="0.01" max="10" step="0.01" class="custom-amount-input">
+                <button class="custom-amount-btn" id="useCustomAmount">Use Custom</button>
             </div>
 
             <!-- Betting Buttons -->
@@ -655,14 +703,18 @@
                 tg.expand();
                 tg.disableVerticalSwipes();
                 
-                // Get user data
+                // Force dark theme
+                if (tg.setBackgroundColor) {
+                    tg.setBackgroundColor('#0f0f23');
+                }
+                if (tg.setHeaderColor) {
+                    tg.setHeaderColor('#000000');
+                }
+                
                 userData = tg.initDataUnsafe?.user;
                 if (userData) {
                     console.log('👤 User:', userData.first_name);
                 }
-                
-                // Set theme
-                document.body.style.backgroundColor = tg.backgroundColor || '#0f0f23';
                 
                 console.log('✅ Telegram Web App initialized');
             } else {
@@ -671,7 +723,7 @@
             }
         }
 
-        // Chart functionality
+        // Chart functionality with enhanced visibility
         const ctx = document.getElementById('priceChart').getContext('2d');
         let chart;
 
@@ -687,23 +739,41 @@
                             label: 'Price',
                             data: data.values,
                             borderColor: '#4ecdc4',
-                            backgroundColor: 'rgba(78, 205, 196, 0.08)',
-                            borderWidth: 3,
+                            backgroundColor: 'rgba(78, 205, 196, 0.15)',
+                            borderWidth: 4,
                             fill: true,
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            pointHoverRadius: 8,
+                            pointBackgroundColor: '#4ecdc4',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: { x: { display: false }, y: { display: false } },
+                        plugins: { 
+                            legend: { display: false }
+                        },
+                        scales: { 
+                            x: { 
+                                display: false,
+                                grid: { display: false }
+                            }, 
+                            y: { 
+                                display: false,
+                                grid: { display: false }
+                            }
+                        },
+                        elements: {
+                            point: { radius: 0 }
+                        },
                         animation: { duration: 0 }
                     }
                 });
                 
-                console.log('📊 Chart initialized');
+                console.log('📊 Chart initialized with enhanced visibility');
                 return true;
             } catch (error) {
                 console.error('❌ Chart error:', error);
@@ -740,9 +810,15 @@
                 currentData.push(newValue);
                 
                 chart.data.datasets[0].data = currentData;
-                chart.data.datasets[0].borderColor = newValue > lastValue ? '#4ecdc4' : '#ff6b6b';
-                chart.data.datasets[0].backgroundColor = newValue > lastValue ? 
-                    'rgba(78, 205, 196, 0.08)' : 'rgba(255, 107, 107, 0.08)';
+                
+                // Enhanced visibility with brighter colors
+                if (newValue > lastValue) {
+                    chart.data.datasets[0].borderColor = '#4ecdc4';
+                    chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.2)';
+                } else {
+                    chart.data.datasets[0].borderColor = '#ff6b6b';
+                    chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.2)';
+                }
                 
                 chart.update('none');
             } catch (error) {
@@ -772,11 +848,17 @@
                     }
                     
                     chart.data.datasets[0].data = newData;
-                    chart.data.datasets[0].borderColor = finalResult === 'PUMP' ? '#4ecdc4' : '#ff6b6b';
-                    chart.data.datasets[0].backgroundColor = finalResult === 'PUMP' ? 
-                        'rgba(78, 205, 196, 0.15)' : 'rgba(255, 107, 107, 0.15)';
-                    chart.data.datasets[0].borderWidth = 4;
                     
+                    // Bright colors for dramatic effect
+                    if (finalResult === 'PUMP') {
+                        chart.data.datasets[0].borderColor = '#4ecdc4';
+                        chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.3)';
+                    } else {
+                        chart.data.datasets[0].borderColor = '#ff6b6b';
+                        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.3)';
+                    }
+                    
+                    chart.data.datasets[0].borderWidth = 5;
                     chart.update('none');
                     step++;
                     
@@ -799,7 +881,6 @@
             
             overlay.style.display = 'block';
             
-            // Haptic feedback
             if (tg?.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('heavy');
             }
@@ -1006,7 +1087,8 @@
                             const newData = generateChartData();
                             chart.data.datasets[0].data = newData.values;
                             chart.data.datasets[0].borderColor = '#4ecdc4';
-                            chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.08)';
+                            chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.15)';
+                            chart.data.datasets[0].borderWidth = 4;
                             chart.update();
                         }
                     }
@@ -1033,16 +1115,51 @@
             if (initChart()) {
                 console.log('✅ Chart ready');
                 
+                // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         gameState.selectedAmount = parseFloat(btn.dataset.amount);
                         
+                        // Clear custom input
+                        document.getElementById('customAmount').value = '';
+                        
                         if (tg?.HapticFeedback) {
                             tg.HapticFeedback.impactOccurred('light');
                         }
                     });
+                });
+                
+                // Custom amount functionality
+                document.getElementById('useCustomAmount').addEventListener('click', () => {
+                    const customInput = document.getElementById('customAmount');
+                    const customValue = parseFloat(customInput.value);
+                    
+                    if (customValue && customValue >= 0.01 && customValue <= 10) {
+                        // Remove active from all preset buttons
+                        document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+                        
+                        gameState.selectedAmount = customValue;
+                        
+                        // Visual feedback
+                        document.getElementById('useCustomAmount').style.background = 'rgba(78, 205, 196, 0.3)';
+                        setTimeout(() => {
+                            document.getElementById('useCustomAmount').style.background = 'rgba(255, 215, 0, 0.2)';
+                        }, 300);
+                        
+                        if (tg?.HapticFeedback) {
+                            tg.HapticFeedback.impactOccurred('medium');
+                        }
+                        
+                        console.log(`Custom amount set: ${customValue} SOL`);
+                    } else {
+                        if (tg?.showAlert) {
+                            tg.showAlert('Please enter amount between 0.01 and 10 SOL');
+                        } else {
+                            alert('Please enter amount between 0.01 and 10 SOL');
+                        }
+                    }
                 });
                 
                 document.getElementById('pumpButton').addEventListener('click', () => placeBet('PUMP'));
@@ -1061,7 +1178,7 @@
                     
                 }, 1000);
                 
-                console.log('🚀 Game ready!');
+                console.log('🚀 Game ready with dark theme!');
             }
         });
     </script>
