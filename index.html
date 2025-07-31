@@ -92,6 +92,90 @@
             font-weight: bold;
             color: #ffd700 !important;
             font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .balance:hover {
+            background: rgba(255, 215, 0, 0.3) !important;
+            transform: scale(1.05);
+        }
+
+        /* Wallet Menu */
+        .wallet-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .wallet-content {
+            background: rgba(15, 15, 35, 0.9);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .wallet-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .wallet-balance {
+            font-size: 2em;
+            font-weight: 900;
+            color: #4ecdc4;
+            margin-bottom: 30px;
+        }
+
+        .wallet-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-btn {
+            padding: 15px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-btn.withdraw {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .wallet-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .close-wallet {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
         }
 
         /* Game Area - Maximum space for chart */
@@ -141,6 +225,129 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
         }
 
+        /* Win/Loss Result Overlay */
+        .result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .result-content {
+            background: rgba(15, 15, 35, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 3px solid;
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .result-content.win {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+        }
+
+        .result-content.loss {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .result-title {
+            font-size: 2em;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .result-title.win {
+            color: #4ecdc4;
+        }
+
+        .result-title.loss {
+            color: #ff6b6b;
+        }
+
+        .result-amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .result-message {
+            font-size: 1em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .result-close {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Leaderboard Section */
+        .leaderboard-section {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-title {
+            text-align: center;
+            font-size: 0.9em;
+            color: #ffd700 !important;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .leaderboard-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .leaderboard-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 8px;
+            border-radius: 8px;
+            border-left: 3px solid;
+            font-size: 0.75em;
+        }
+
+        .leaderboard-item.round {
+            border-left-color: #4ecdc4;
+        }
+
+        .leaderboard-item.daily {
+            border-left-color: #ffd700;
+        }
+
+        .leaderboard-label {
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+
+        .leaderboard-value {
+            font-weight: bold;
+            color: white;
+        }
+
         /* MASSIVE CHART SECTION - This is the star! */
         .chart-section {
             background: rgba(0, 0, 0, 0.7) !important;
@@ -151,9 +358,9 @@
             position: relative;
             
             /* HUGE HEIGHT - Takes up most of the screen */
-            height: calc(100vh - 300px);
-            min-height: 350px;
-            max-height: 500px;
+            height: calc(100vh - 320px);
+            min-height: 300px;
+            max-height: 450px;
             
             overflow: hidden;
             margin: 5px 0;
@@ -502,8 +709,8 @@
             }
             
             .chart-section {
-                height: calc(100vh - 280px);
-                min-height: 300px;
+                height: calc(100vh - 300px);
+                min-height: 280px;
                 padding: 8px;
             }
             
@@ -570,7 +777,7 @@
             <h1>🎰 Pump or Dump</h1>
             <div class="header-right">
                 <div class="timer-header" id="timer">20s</div>
-                <div class="balance" id="userBalance">10.000 SOL</div>
+                <div class="balance" id="userBalance" onclick="openWallet()">10.000 SOL</div>
             </div>
         </div>
 
@@ -580,6 +787,21 @@
             <div class="round-status">
                 <div class="round-number" id="roundNumber">Round #1</div>
                 <div class="phase-indicator phase-betting" id="phaseIndicator">🎯 Betting</div>
+            </div>
+
+            <!-- NEW: Leaderboard Section -->
+            <div class="leaderboard-section">
+                <div class="leaderboard-title">🏆 Leaderboard</div>
+                <div class="leaderboard-stats">
+                    <div class="leaderboard-item round">
+                        <div class="leaderboard-label">🔥 Round Winner</div>
+                        <div class="leaderboard-value" id="roundWinner">-</div>
+                    </div>
+                    <div class="leaderboard-item daily">
+                        <div class="leaderboard-label">👑 Daily Best</div>
+                        <div class="leaderboard-value" id="dailyWinner">25.7x CryptoKing</div>
+                    </div>
+                </div>
             </div>
 
             <!-- MASSIVE CHART SECTION - THE STAR OF THE SHOW -->
@@ -608,7 +830,7 @@
                     </div>
                     <div class="pot-item dump">
                         <div class="pot-emoji">📉</div>
-                        <div class="div-amount" id="dumpAmount">0.000</div>
+                        <div class="pot-amount" id="dumpAmount">0.000</div>
                         <div class="pot-percentage" id="dumpPercent">0%</div>
                     </div>
                 </div>
@@ -655,8 +877,35 @@
         </div>
     </div>
 
+    <!-- NEW: Win/Loss Result Overlay -->
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-content" id="resultContent">
+            <div class="result-title" id="resultTitle">🎉 YOU WON!</div>
+            <div class="result-amount" id="resultAmount">+2.5 SOL</div>
+            <div class="result-message" id="resultMessage">Awesome prediction! 🚀</div>
+            <button class="result-close" onclick="closeResult()">Continue Playing</button>
+        </div>
+    </div>
+
+    <!-- NEW: Wallet Menu -->
+    <div class="wallet-menu" id="walletMenu">
+        <div class="wallet-content">
+            <div class="wallet-title">💰 Your Wallet</div>
+            <div class="wallet-balance" id="walletBalance">10.000 SOL</div>
+            <div class="wallet-buttons">
+                <button class="wallet-btn" onclick="depositMoney()">
+                    💎 Deposit
+                </button>
+                <button class="wallet-btn withdraw" onclick="withdrawMoney()">
+                    💸 Withdraw
+                </button>
+            </div>
+            <button class="close-wallet" onclick="closeWallet()">Close</button>
+        </div>
+    </div>
+
     <script>
-        console.log('🎰 INSTANT Pump or Dump Starting...');
+        console.log('🎰 Enhanced Pump or Dump Starting...');
 
         // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
@@ -671,7 +920,10 @@
             userBalance: 10.0,
             userBet: null,
             selectedAmount: 0.1,
-            recentResults: []
+            recentResults: [],
+            currentResult: null,
+            roundWinner: null,
+            dailyBest: { multiplier: 25.7, name: 'CryptoKing' }
         };
 
         // Initialize Telegram Web App
@@ -700,13 +952,112 @@
             }
         }
 
-        // Enhanced Chart with maximum visibility
+        // Wallet functions
+        function openWallet() {
+            document.getElementById('walletMenu').style.display = 'flex';
+            document.getElementById('walletBalance').textContent = `${gameState.userBalance.toFixed(3)} SOL`;
+            
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function closeWallet() {
+            document.getElementById('walletMenu').style.display = 'none';
+        }
+
+        function depositMoney() {
+            if (tg?.showAlert) {
+                tg.showAlert('🚀 Deposit feature coming soon! Connect your Solana wallet to add real SOL.');
+            } else {
+                alert('🚀 Deposit feature coming soon! Connect your Solana wallet to add real SOL.');
+            }
+        }
+
+        function withdrawMoney() {
+            if (gameState.userBalance < 0.1) {
+                if (tg?.showAlert) {
+                    tg.showAlert('💸 Minimum withdrawal is 0.1 SOL. Keep playing to win more!');
+                } else {
+                    alert('💸 Minimum withdrawal is 0.1 SOL. Keep playing to win more!');
+                }
+                return;
+            }
+            
+            if (tg?.showAlert) {
+                tg.showAlert('💰 Withdrawal feature coming soon! You can withdraw your SOL winnings to your wallet.');
+            } else {
+                alert('💰 Withdrawal feature coming soon! You can withdraw your SOL winnings to your wallet.');
+            }
+        }
+
+        // Win/Loss result functions
+        function showResultOverlay(won, amount, multiplier) {
+            const overlay = document.getElementById('resultOverlay');
+            const content = document.getElementById('resultContent');
+            const title = document.getElementById('resultTitle');
+            const amountEl = document.getElementById('resultAmount');
+            const message = document.getElementById('resultMessage');
+            
+            content.className = `result-content ${won ? 'win' : 'loss'}`;
+            title.className = `result-title ${won ? 'win' : 'loss'}`;
+            
+            if (won) {
+                title.textContent = '🎉 YOU WON!';
+                amountEl.textContent = `+${amount.toFixed(3)} SOL`;
+                
+                const messages = [
+                    'Incredible prediction! 🚀',
+                    'You nailed it! 💎',
+                    'Amazing call! 🔥',
+                    'Perfect timing! ⚡',
+                    'You\'re on fire! 🎯'
+                ];
+                message.textContent = messages[Math.floor(Math.random() * messages.length)];
+                
+                if (multiplier > 3) {
+                    message.textContent += ` ${multiplier.toFixed(1)}x multiplier!`;
+                }
+            } else {
+                title.textContent = '💔 So Close!';
+                amountEl.textContent = `-${gameState.userBet.amount.toFixed(3)} SOL`;
+                
+                const messages = [
+                    'Try again! You got this! 💪',
+                    'Almost had it! Next round! 🎯',
+                    'So close! Keep going! 🚀',
+                    'Better luck next time! 🍀',
+                    'You\'ll get the next one! ⚡'
+                ];
+                message.textContent = messages[Math.floor(Math.random() * messages.length)];
+            }
+            
+            overlay.style.display = 'flex';
+            
+            if (tg?.HapticFeedback) {
+                if (won) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                } else {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
+            }
+        }
+
+        function closeResult() {
+            document.getElementById('resultOverlay').style.display = 'none';
+        }
+
+        // Enhanced Chart with FIXED result sync
         const ctx = document.getElementById('priceChart').getContext('2d');
         let chart;
+        let chartStartValue = 100;
+        let chartEndValue = 100;
 
         function initChart() {
             try {
                 const data = generateChartData();
+                chartStartValue = data.values[0];
+                chartEndValue = data.values[data.values.length - 1];
                 
                 chart = new Chart(ctx, {
                     type: 'line',
@@ -750,7 +1101,7 @@
                     }
                 });
                 
-                console.log('📊 Chart initialized with MAXIMUM visibility');
+                console.log('📊 Chart initialized with FIXED sync');
                 return true;
             } catch (error) {
                 console.error('❌ Chart error:', error);
@@ -761,11 +1112,11 @@
         function generateChartData() {
             const labels = [];
             const values = [];
-            let currentPrice = 100;
+            let currentPrice = 80 + Math.random() * 40; // Start between 80-120
             
             for (let i = 0; i < 60; i++) {
                 labels.push(i);
-                const change = (Math.random() - 0.5) * 8;
+                const change = (Math.random() - 0.5) * 6;
                 currentPrice += change;
                 currentPrice = Math.max(40, Math.min(160, currentPrice));
                 values.push(currentPrice);
@@ -780,15 +1131,16 @@
             try {
                 const currentData = [...chart.data.datasets[0].data];
                 const lastValue = currentData[currentData.length - 1];
-                const change = (Math.random() - 0.5) * 10;
+                const change = (Math.random() - 0.5) * 8;
                 const newValue = Math.max(20, Math.min(180, lastValue + change));
                 
                 currentData.shift();
                 currentData.push(newValue);
                 
                 chart.data.datasets[0].data = currentData;
+                chartEndValue = newValue; // Track the current end value
                 
-                // Super bright colors for maximum visibility
+                // Update colors based on movement
                 if (newValue > lastValue) {
                     chart.data.datasets[0].borderColor = '#4ecdc4';
                     chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.25)';
@@ -806,9 +1158,20 @@
         function animateChart(finalResult) {
             if (!chart) return;
             
+            // FIXED: Determine result based on actual chart movement
+            const startData = [...chart.data.datasets[0].data];
+            const initialValue = startData[Math.floor(startData.length * 0.6)];
+            
             let step = 0;
             const totalSteps = 20;
-            const startData = [...chart.data.datasets[0].data];
+            let finalValue;
+            
+            // Set target based on desired result
+            if (finalResult === 'PUMP') {
+                finalValue = initialValue + 20 + Math.random() * 30; // Ensure upward movement
+            } else {
+                finalValue = initialValue - 20 - Math.random() * 30; // Ensure downward movement
+            }
             
             const interval = setInterval(() => {
                 try {
@@ -817,16 +1180,18 @@
                     
                     for (let i = Math.floor(startData.length * 0.6); i < startData.length; i++) {
                         const baseValue = startData[i];
-                        const volatility = (Math.random() - 0.5) * 20;
-                        const trend = finalResult === 'PUMP' ? 1 : -1;
-                        const movement = Math.sin(progress * Math.PI) * 40 * trend;
+                        const progressToFinal = (i - Math.floor(startData.length * 0.6)) / (startData.length - Math.floor(startData.length * 0.6));
+                        const targetValue = baseValue + (finalValue - baseValue) * progressToFinal;
                         
-                        newData[i] = Math.max(10, Math.min(190, baseValue + volatility + movement));
+                        const volatility = (Math.random() - 0.5) * 10 * (1 - progress);
+                        const smoothMovement = baseValue + (targetValue - baseValue) * progress;
+                        
+                        newData[i] = Math.max(10, Math.min(190, smoothMovement + volatility));
                     }
                     
                     chart.data.datasets[0].data = newData;
                     
-                    // Maximum contrast colors
+                    // Set colors to match result
                     if (finalResult === 'PUMP') {
                         chart.data.datasets[0].borderColor = '#4ecdc4';
                         chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.4)';
@@ -842,6 +1207,10 @@
                     if (step >= totalSteps) {
                         clearInterval(interval);
                         showResult(finalResult);
+                        
+                        // Store actual result for syncing
+                        gameState.currentResult = finalResult;
+                        chartEndValue = newData[newData.length - 1];
                     }
                 } catch (error) {
                     clearInterval(interval);
@@ -858,11 +1227,7 @@
             
             overlay.style.display = 'block';
             
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('heavy');
-            }
-            
-            // SHORTENED: Show result for only 2 seconds instead of 3
+            // Show result for 2 seconds
             setTimeout(() => {
                 overlay.style.display = 'none';
             }, 2000);
@@ -910,6 +1275,10 @@
             } else {
                 betStatus.classList.add('hidden');
             }
+
+            // Update leaderboard
+            document.getElementById('roundWinner').textContent = gameState.roundWinner || '-';
+            document.getElementById('dailyWinner').textContent = `${gameState.dailyBest.multiplier}x ${gameState.dailyBest.name}`;
         }
 
         function updateRecentResults() {
@@ -997,7 +1366,7 @@
             }, 300);
         }
 
-        // NEW: Instant round transition animation
+        // Round transition animation
         function showRoundTransition() {
             const roundStatus = document.querySelector('.round-status');
             roundStatus.classList.add('round-transition');
@@ -1006,7 +1375,7 @@
             }, 500);
         }
 
-        // FIXED: Game simulation with NO DELAYS!
+        // ENHANCED: Game simulation with results tracking
         function simulateGame() {
             setInterval(() => {
                 if (gameState.timeLeft > 0) {
@@ -1017,10 +1386,11 @@
                         gameState.phase = 'revealing';
                         gameState.timeLeft = 10;
                         
-                        const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
+                        // Generate result (slightly favor PUMP for excitement)
+                        const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
                         animateChart(result);
                         
-                        // Calculate winnings during reveal
+                        // Calculate and show user result
                         if (gameState.userBet) {
                             const won = gameState.userBet.type === result;
                             if (won) {
@@ -1028,34 +1398,54 @@
                                 const totalPot = gameState.pumpPot + gameState.dumpPot;
                                 const houseCut = totalPot * 0.05;
                                 const winnersPool = totalPot - houseCut;
-                                const multiplier = winnersPool / winningPot;
+                                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
                                 const payout = gameState.userBet.amount * multiplier;
                                 
                                 gameState.userBalance += payout;
                                 
-                                if (tg?.HapticFeedback) {
-                                    tg.HapticFeedback.notificationOccurred('success');
-                                }
+                                // Show win overlay after 3 seconds
+                                setTimeout(() => {
+                                    showResultOverlay(true, payout, multiplier);
+                                }, 3000);
+                                
                             } else {
-                                if (tg?.HapticFeedback) {
-                                    tg.HapticFeedback.notificationOccurred('error');
-                                }
+                                // Show loss overlay after 3 seconds
+                                setTimeout(() => {
+                                    showResultOverlay(false, gameState.userBet.amount, 0);
+                                }, 3000);
                             }
                         }
                         
                     } else if (gameState.phase === 'revealing') {
-                        // INSTANT TRANSITION! No waiting phase!
-                        // Directly start the next round
+                        // INSTANT TRANSITION to next round
                         gameState.round++;
                         gameState.phase = 'betting';
                         gameState.timeLeft = 20;
                         
+                        // Use the stored result for consistency
+                        const result = gameState.currentResult || (Math.random() > 0.5 ? 'PUMP' : 'DUMP');
+                        
+                        // Calculate round winner
+                        const totalPot = gameState.pumpPot + gameState.dumpPot;
+                        if (totalPot > 0) {
+                            const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
+                            const multiplier = winningPot > 0 ? (totalPot * 0.95) / winningPot : 0;
+                            
+                            if (multiplier > 1) {
+                                gameState.roundWinner = `${multiplier.toFixed(1)}x Someone`;
+                                
+                                // Update daily best if this is higher
+                                if (multiplier > gameState.dailyBest.multiplier) {
+                                    gameState.dailyBest = { multiplier: multiplier, name: 'Someone' };
+                                }
+                            }
+                        }
+                        
                         // Add result to history
-                        const result = Math.random() > 0.5 ? 'PUMP' : 'DUMP';
                         gameState.recentResults.unshift({
                             round: gameState.round - 1,
                             result: result,
-                            pot: (gameState.pumpPot + gameState.dumpPot).toFixed(2)
+                            pot: totalPot.toFixed(2)
                         });
                         
                         if (gameState.recentResults.length > 10) {
@@ -1067,11 +1457,10 @@
                         gameState.dumpPot = 0;
                         gameState.playerCount = 0;
                         gameState.userBet = null;
+                        gameState.currentResult = null;
                         
-                        // Update results display
+                        // Update displays
                         updateRecentResults();
-                        
-                        // Show instant transition animation
                         showRoundTransition();
                         
                         // Generate new chart
@@ -1084,7 +1473,7 @@
                             chart.update();
                         }
                         
-                        console.log('🚀 INSTANT ROUND TRANSITION! No delays!');
+                        console.log('🚀 INSTANT ROUND TRANSITION with result tracking!');
                     }
                 }
                 
@@ -1108,7 +1497,7 @@
             initTelegramWebApp();
             
             if (initChart()) {
-                console.log('✅ INSTANT Chart-focused layout ready');
+                console.log('✅ Enhanced game with all features ready');
                 
                 // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -1169,7 +1558,7 @@
                     
                 }, 1000);
                 
-                console.log('🚀 INSTANT game ready! NO MORE DELAYS between rounds!');
+                console.log('🚀 ENHANCED game ready with win/loss overlays, leaderboard, chart sync fix, and wallet menu!');
             }
         });
     </script>
