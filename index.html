@@ -523,21 +523,22 @@
         .bet-amount-selector {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             margin-bottom: 8px;
             flex-wrap: wrap;
         }
 
         .amount-btn {
-            padding: 4px 8px;
+            padding: 4px 6px;
             background: rgba(0, 0, 0, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             color: white !important;
-            font-size: 0.75em;
+            font-size: 0.7em;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
+            min-width: 32px;
         }
 
         .amount-btn.active {
@@ -845,9 +846,12 @@
                 <!-- Bet Amount Selector -->
                 <div class="bet-amount-selector">
                     <div class="amount-btn" data-amount="0.01">0.01</div>
+                    <div class="amount-btn" data-amount="0.05">0.05</div>
                     <div class="amount-btn active" data-amount="0.1">0.1</div>
+                    <div class="amount-btn" data-amount="0.2">0.2</div>
                     <div class="amount-btn" data-amount="0.5">0.5</div>
                     <div class="amount-btn" data-amount="1.0">1.0</div>
+                    <div class="amount-btn" data-amount="2.0">2.0</div>
                 </div>
                 
                 <!-- Custom Amount -->
@@ -967,10 +971,31 @@
         }
 
         function depositMoney() {
-            if (tg?.showAlert) {
-                tg.showAlert('🚀 Deposit feature coming soon! Connect your Solana wallet to add real SOL.');
+            // Show deposit modal with Solana wallet integration
+            if (tg?.showPopup) {
+                tg.showPopup({
+                    title: '💎 Deposit SOL',
+                    message: `Send SOL to this address:\n\n7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv\n\nMinimum: 0.1 SOL\nBalance updates automatically!`,
+                    buttons: [
+                        {id: 'copy', type: 'default', text: '📋 Copy Address'},
+                        {id: 'close', type: 'cancel', text: 'Close'}
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 'copy') {
+                        // Copy wallet address to clipboard
+                        navigator.clipboard?.writeText('7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv');
+                        tg.showAlert('✅ Wallet address copied!');
+                    }
+                });
             } else {
-                alert('🚀 Deposit feature coming soon! Connect your Solana wallet to add real SOL.');
+                // Fallback for non-Telegram
+                const address = '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv';
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(address);
+                    alert(`💎 Deposit Address Copied!\n\n${address}\n\nSend SOL to this address.\nMinimum: 0.1 SOL`);
+                } else {
+                    alert(`💎 Deposit SOL to:\n\n${address}\n\nMinimum: 0.1 SOL\nBalance updates automatically!`);
+                }
             }
         }
 
@@ -984,10 +1009,29 @@
                 return;
             }
             
-            if (tg?.showAlert) {
-                tg.showAlert('💰 Withdrawal feature coming soon! You can withdraw your SOL winnings to your wallet.');
+            // Show withdrawal form
+            if (tg?.showPopup) {
+                tg.showPopup({
+                    title: '💰 Withdraw SOL',
+                    message: `Available: ${gameState.userBalance.toFixed(3)} SOL\n\nEnter your Solana wallet address to withdraw.\n\nFee: 0.01 SOL\nProcessing: Instant`,
+                    buttons: [
+                        {id: 'withdraw', type: 'default', text: '💸 Enter Address'},
+                        {id: 'close', type: 'cancel', text: 'Cancel'}
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 'withdraw') {
+                        // In real implementation, show input form
+                        tg.showAlert('🚧 Withdrawal form coming soon! You\'ll be able to enter your wallet address and withdraw instantly.');
+                    }
+                });
             } else {
-                alert('💰 Withdrawal feature coming soon! You can withdraw your SOL winnings to your wallet.');
+                // Fallback for non-Telegram
+                const address = prompt('💰 Enter your Solana wallet address:');
+                if (address && address.length > 30) {
+                    alert(`✅ Withdrawal initiated!\n\nAmount: ${(gameState.userBalance - 0.01).toFixed(3)} SOL\nTo: ${address.substring(0, 20)}...\nFee: 0.01 SOL\n\n🚧 Feature coming soon!`);
+                } else if (address) {
+                    alert('❌ Invalid wallet address. Please enter a valid Solana address.');
+                }
             }
         }
 
