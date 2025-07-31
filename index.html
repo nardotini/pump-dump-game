@@ -1202,19 +1202,51 @@
         function animateChart(finalResult) {
             if (!chart) return;
             
-            // LIGHTNING FAST: Determine result based on actual chart movement
+            // OPTION B: Realistic Movement Constraints for fairness
             const startData = [...chart.data.datasets[0].data];
             const initialValue = startData[Math.floor(startData.length * 0.6)];
+            const currentTrend = startData[startData.length - 1] - startData[startData.length - 10];
             
             let step = 0;
-            const totalSteps = 10; // REDUCED from 20 to 10 for faster animation
+            const totalSteps = 10;
             let finalValue;
             
-            // Set target based on desired result
-            if (finalResult === 'PUMP') {
-                finalValue = initialValue + 25 + Math.random() * 40; // Bigger movements for drama
+            // REALISTIC CONSTRAINTS: Check if result makes sense with current trend
+            const trendStrength = Math.abs(currentTrend);
+            const isGoingUp = currentTrend > 0;
+            const isGoingDown = currentTrend < 0;
+            
+            // If strong trend exists, respect it more often for realism
+            let actualResult = finalResult;
+            if (trendStrength > 15) { // Strong trend detected
+                if (isGoingUp && finalResult === 'DUMP' && Math.random() < 0.3) {
+                    // 30% chance to override unrealistic DUMP when strongly trending up
+                    actualResult = 'PUMP';
+                    console.log('🎯 Realistic override: Strong uptrend, switched to PUMP');
+                } else if (isGoingDown && finalResult === 'PUMP' && Math.random() < 0.3) {
+                    // 30% chance to override unrealistic PUMP when strongly trending down
+                    actualResult = 'DUMP';
+                    console.log('🎯 Realistic override: Strong downtrend, switched to DUMP');
+                }
+            }
+            
+            // Set realistic target based on actual result and current trend
+            if (actualResult === 'PUMP') {
+                if (isGoingUp) {
+                    // Continue the uptrend naturally
+                    finalValue = initialValue + 20 + Math.random() * 30;
+                } else {
+                    // Reverse downtrend (more dramatic but realistic)
+                    finalValue = initialValue + 15 + Math.random() * 25;
+                }
             } else {
-                finalValue = initialValue - 25 - Math.random() * 40; // Bigger movements for drama
+                if (isGoingDown) {
+                    // Continue the downtrend naturally
+                    finalValue = initialValue - 20 - Math.random() * 30;
+                } else {
+                    // Reverse uptrend (more dramatic but realistic)
+                    finalValue = initialValue - 15 - Math.random() * 25;
+                }
             }
             
             const interval = setInterval(() => {
@@ -1227,40 +1259,52 @@
                         const progressToFinal = (i - Math.floor(startData.length * 0.6)) / (startData.length - Math.floor(startData.length * 0.6));
                         const targetValue = baseValue + (finalValue - baseValue) * progressToFinal;
                         
-                        // INCREASED volatility for more dramatic movement
-                        const volatility = (Math.random() - 0.5) * 20 * (1 - progress * 0.7);
-                        const smoothMovement = baseValue + (targetValue - baseValue) * Math.pow(progress, 0.8); // Faster acceleration
+                        // REALISTIC VOLATILITY: Less jarring movements
+                        let volatility;
+                        if (progress > 0.8) {
+                            // Final 20% - minimal volatility for clear result
+                            volatility = (Math.random() - 0.5) * 4;
+                        } else if (progress > 0.5) {
+                            // Middle phase - moderate volatility
+                            volatility = (Math.random() - 0.5) * 12 * (1 - progress * 0.5);
+                        } else {
+                            // Early phase - normal volatility
+                            volatility = (Math.random() - 0.5) * 16 * (1 - progress * 0.3);
+                        }
+                        
+                        // SMOOTH REALISTIC MOVEMENT: More natural acceleration
+                        const smoothMovement = baseValue + (targetValue - baseValue) * Math.pow(progress, 0.7);
                         
                         newData[i] = Math.max(10, Math.min(190, smoothMovement + volatility));
                     }
                     
                     chart.data.datasets[0].data = newData;
                     
-                    // Set colors to match result
-                    if (finalResult === 'PUMP') {
-                        chart.data.datasets[0].borderColor = '#4ecdc4';
-                        chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.4)';
+                    // Set colors to match actual result (more pronounced in final steps)
+                    if (actualResult === 'PUMP') {
+                        chart.data.datasets[0].borderColor = progress > 0.7 ? '#4ecdc4' : '#4ecdc4';
+                        chart.data.datasets[0].backgroundColor = `rgba(78, 205, 196, ${0.2 + progress * 0.3})`;
                     } else {
-                        chart.data.datasets[0].borderColor = '#ff6b6b';
-                        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.4)';
+                        chart.data.datasets[0].borderColor = progress > 0.7 ? '#ff6b6b' : '#ff6b6b';
+                        chart.data.datasets[0].backgroundColor = `rgba(255, 107, 107, ${0.2 + progress * 0.3})`;
                     }
                     
-                    chart.data.datasets[0].borderWidth = 6;
+                    chart.data.datasets[0].borderWidth = 6 + (progress * 2);
                     chart.update('none');
                     step++;
                     
                     if (step >= totalSteps) {
                         clearInterval(interval);
-                        showResult(finalResult);
+                        showResult(actualResult); // Show the actual (possibly adjusted) result
                         
                         // Store actual result for syncing
-                        gameState.currentResult = finalResult;
+                        gameState.currentResult = actualResult;
                         chartEndValue = newData[newData.length - 1];
                     }
                 } catch (error) {
                     clearInterval(interval);
                 }
-            }, 50); // FASTER: 50ms instead of 100ms intervals
+            }, 50);
         }
 
         function showResult(result) {
