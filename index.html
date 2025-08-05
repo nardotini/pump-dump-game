@@ -992,19 +992,28 @@
             initFirebaseAuth();
         }
 
-        // Firebase Authentication
+        // Firebase Authentication - USE TELEGRAM ID
         function initFirebaseAuth() {
-            auth.signInAnonymously()
-                .then((userCredential) => {
-                    currentUser = userCredential.user;
-                    console.log('🔐 User authenticated:', currentUser.uid);
-                    loadUserBalance();
-                })
-                .catch((error) => {
-                    console.error('❌ Auth error:', error);
-                    // Fallback to demo mode
-                    console.log('⚠️ Using demo mode');
-                });
+            // Use Telegram user ID instead of anonymous auth
+            if (userData && userData.id) {
+                // Create consistent user ID from Telegram
+                const telegramUserId = `tg_${userData.id}`;
+                currentUser = { uid: telegramUserId };
+                console.log('🔐 Using Telegram ID:', telegramUserId);
+                loadUserBalance();
+            } else {
+                // Fallback to anonymous auth
+                auth.signInAnonymously()
+                    .then((userCredential) => {
+                        currentUser = userCredential.user;
+                        console.log('🔐 User authenticated (anonymous):', currentUser.uid);
+                        loadUserBalance();
+                    })
+                    .catch((error) => {
+                        console.error('❌ Auth error:', error);
+                        console.log('⚠️ Using demo mode');
+                    });
+            }
         }
 
         // Load user balance from Firebase
