@@ -908,8 +908,36 @@
         </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+
     <script>
-        console.log('🎰 Enhanced Pump or Dump Starting...');
+        console.log('🎰 Real Money Pump or Dump Starting...');
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCm8L54hCLrR36T6eV3KAOD_8iHGyv-AJs",
+            authDomain: "pump-dump-game.firebaseapp.com",
+            databaseURL: "https://pump-dump-game-default-rtdb.firebaseio.com",
+            projectId: "pump-dump-game",
+            storageBucket: "pump-dump-game.firebasestorage.app",
+            messagingSenderId: "455371839436",
+            appId: "1:455371839436:web:6be0e809019f82f3322f69"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // User state
+        let currentUser = null;
+        let userWallet = null;
 
         // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
@@ -930,7 +958,7 @@
             dailyBest: { multiplier: 25.7, name: 'CryptoKing' }
         };
 
-        // Initialize Telegram Web App
+        // Initialize Telegram Web App + Firebase
         function initTelegramWebApp() {
             if (tg) {
                 tg.ready();
@@ -953,6 +981,70 @@
             } else {
                 console.log('⚠️ Running outside Telegram - demo mode');
                 userData = { first_name: 'Demo User', id: 12345 };
+            }
+
+            // Initialize Firebase Authentication
+            initFirebaseAuth();
+        }
+
+        // Firebase Authentication
+        function initFirebaseAuth() {
+            auth.signInAnonymously()
+                .then((userCredential) => {
+                    currentUser = userCredential.user;
+                    console.log('🔐 User authenticated:', currentUser.uid);
+                    loadUserBalance();
+                })
+                .catch((error) => {
+                    console.error('❌ Auth error:', error);
+                    // Fallback to demo mode
+                    console.log('⚠️ Using demo mode');
+                });
+        }
+
+        // Load user balance from Firebase
+        async function loadUserBalance() {
+            if (!currentUser) return;
+
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    gameState.userBalance = userData.balance || 10.0;
+                    userWallet = userData.wallet || null;
+                    console.log('💰 Loaded balance:', gameState.userBalance);
+                } else {
+                    // New user - create with 10 SOL starting balance
+                    await db.collection('users').doc(currentUser.uid).set({
+                        balance: 10.0,
+                        wallet: null,
+                        created: firebase.firestore.FieldValue.serverTimestamp(),
+                        totalWagered: 0,
+                        totalWon: 0
+                    });
+                    gameState.userBalance = 10.0;
+                    console.log('🎉 New user created with 10 SOL!');
+                }
+                
+                updateDisplay();
+            } catch (error) {
+                console.error('❌ Error loading balance:', error);
+            }
+        }
+
+        // Save user balance to Firebase
+        async function saveUserBalance() {
+            if (!currentUser) return;
+
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    balance: gameState.userBalance,
+                    lastPlayed: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('💾 Balance saved:', gameState.userBalance);
+            } catch (error) {
+                console.error('❌ Error saving balance:', error);
             }
         }
 
@@ -1417,6 +1509,9 @@
             gameState.userBalance -= gameState.selectedAmount;
             gameState.totalPot += gameState.selectedAmount;
             
+            // Save balance to Firebase
+            saveUserBalance();
+            
             if (type === 'PUMP') {
                 gameState.pumpPot += gameState.selectedAmount;
             } else {
@@ -1492,16 +1587,19 @@
                                 
                                 gameState.userBalance += payout;
                                 
+                                // Save balance to Firebase
+                                saveUserBalance();
+                                
                                 // Show win overlay after 1.5 seconds (faster timing)
                                 setTimeout(() => {
                                     showResultOverlay(true, payout, multiplier);
                                 }, 1500);
                                 
                             } else {
-                                // Show loss overlay after 3 seconds
+                                // Show loss overlay after 1.5 seconds (faster timing)
                                 setTimeout(() => {
                                     showResultOverlay(false, gameState.userBet.amount, 0);
-                                }, 3000);
+                                }, 1500);
                             }
                         }
                         
@@ -1537,9 +1635,6 @@
                             pot: totalPot.toFixed(2)
                         });
                         
-                        if (gameState.recentResults.length > 10) {
-                            gameState.recentResults.pop();
-                        }
                         
                         // Reset for new round
                         gameState.pumpPot = 0;
@@ -1562,7 +1657,7 @@
                             chart.update();
                         }
                         
-                        console.log('🚀 INSTANT ROUND TRANSITION with result tracking!');
+                        console.log('🚀 INSTANT ROUND TRANSITION with Firebase persistence!');
                     }
                 }
                 
@@ -1586,7 +1681,7 @@
             initTelegramWebApp();
             
             if (initChart()) {
-                console.log('✅ Enhanced game with all features ready');
+                console.log('✅ Real Money game with Firebase ready');
                 
                 // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -1647,7 +1742,7 @@
                     
                 }, 1000);
                 
-                console.log('🚀 ENHANCED game ready with win/loss overlays, leaderboard, chart sync fix, and wallet menu!');
+                console.log('🚀 REAL MONEY game ready with Firebase persistence, realistic charts, and enhanced UX!');
             }
         });
     </script>
