@@ -1086,9 +1086,29 @@
             }
         }
 
-        // RESET GAME TO ROUND 1 (for testing)
+        // RESET GAME TO ROUND 1 (only if needed - not every refresh)
         async function resetGameToRound1() {
             try {
+                // Check if game is already running properly
+                const gameDoc = await db.collection('game').doc('current').get();
+                
+                if (gameDoc.exists) {
+                    const data = gameDoc.data();
+                    const timeSinceUpdate = Date.now() - data.lastUpdate.toMillis();
+                    
+                    // Only reset if game is stale (more than 2 minutes old)
+                    if (timeSinceUpdate < 120000) {
+                        console.log('🎯 Game is active, joining existing game...');
+                        gameState.round = data.round || 1;
+                        gameState.phase = data.phase || 'betting';
+                        gameState.timeLeft = data.timeLeft || 15;
+                        
+                        // Start syncing to existing game
+                        startRealtimeSync();
+                        return;
+                    }
+                }
+                
                 console.log('🔄 Resetting game to Round 1...');
                 
                 // Reset global game state
@@ -1249,13 +1269,21 @@
                             const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
                             console.log(`🎯 Result: ${result}`);
                             
+                            // Store result for user feedback
+                            gameState.currentResult = result;
+                            
                             // Animate chart with result
-                            if (window.animateChart) {
+                            if (typeof animateChart === 'function') {
                                 animateChart(result);
                             }
                             
-                            // Save result
+                            // Save result and process payouts
                             await saveRoundResult(result);
+                            
+                            // Show user result after 2 seconds
+                            setTimeout(() => {
+                                showUserResult(result);
+                            }, 2000);
                             
                         } else if (gameState.phase === 'revealing') {
                             console.log('🔄 Starting next round...');
@@ -1285,6 +1313,30 @@
             }, 1000);
         }
 
+        // Show user their win/loss result
+        function showUserResult(result) {
+            if (!gameState.userBet) return;
+            
+            const won = gameState.userBet.type === result;
+            
+            if (won) {
+                // Calculate winnings
+                const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
+                const totalPot = gameState.pumpPot + gameState.dumpPot;
+                const houseCut = totalPot * 0.05;
+                const winnersPool = totalPot - houseCut;
+                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
+                const payout = gameState.userBet.amount * multiplier;
+                
+                console.log(`🎉 User WON! Payout: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
+                showResultOverlay(true, payout, multiplier);
+                
+            } else {
+                console.log(`💔 User LOST! Bet: ${gameState.userBet.amount} SOL`);
+                showResultOverlay(false, gameState.userBet.amount, 0);
+            }
+        }
+
         // Update global game state in Firebase
         async function updateGlobalGameState() {
             try {
@@ -1307,7 +1359,7 @@
                 
                 if (roundDoc.exists) {
                     const roundData = roundDoc.data();
-                    const winners = result === 'PUMP' ? roundData.bets.pump : roundData.bets.dump;
+                    const winners = result === 'PUMP' ? (roundData.bets?.pump || {}) : (roundData.bets?.dump || {});
                     const totalPot = gameState.pumpPot + gameState.dumpPot;
                     const houseCut = totalPot * 0.05;
                     const winnersPool = totalPot - houseCut;
@@ -1324,14 +1376,25 @@
                     });
                     
                     // Update winner balances
+                    const batch = db.batch();
                     for (const [userId, bet] of Object.entries(winners)) {
                         const payout = bet.amount * multiplier;
-                        await db.collection('users').doc(userId).update({
-                            balance: firebase.firestore.FieldValue.increment(payout - bet.amount)
+                        const userRef = db.collection('users').doc(userId);
+                        batch.update(userRef, {
+                            balance: firebase.firestore.FieldValue.increment(payout)
                         });
+                        console.log(`💰 Paying ${userId}: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
+                    }
+                    await batch.commit();
+                    
+                    // Update current user balance locally if they won
+                    if (winners[currentUser?.uid]) {
+                        const userPayout = winners[currentUser.uid].amount * multiplier;
+                        gameState.userBalance += userPayout;
+                        console.log(`💰 Your new balance: ${gameState.userBalance.toFixed(3)} SOL`);
                     }
                     
-                    console.log(`🎊 Round ${gameState.round} complete: ${result}, ${multiplier.toFixed(2)}x`);
+                    console.log(`🎊 Round ${gameState.round} complete: ${result}, ${multiplier.toFixed(2)}x, ${Object.keys(winners).length} winners`);
                 }
             } catch (error) {
                 console.error('❌ Error saving round result:', error);
@@ -1890,6 +1953,8 @@
                 const userName = userData?.first_name || userData?.username || 'Player';
                 const roundRef = db.collection('rounds').doc(`round_${gameState.round}`);
                 
+                console.log(`🎯 Placing bet: ${type} ${amount} SOL in round ${gameState.round}`);
+                
                 // Add bet to Firebase
                 const betPath = type === 'PUMP' ? 'bets.pump' : 'bets.dump';
                 await roundRef.set({
@@ -1904,14 +1969,19 @@
                     }
                 }, { merge: true });
                 
-                // Update user balance
+                // Update user balance locally and in Firebase
                 gameState.userBalance -= amount;
                 await saveUserBalance();
                 
-                console.log(`🌍 Multiplayer bet placed: ${type} ${amount} SOL`);
+                console.log(`✅ Bet placed successfully: ${type} ${amount} SOL`);
+                console.log(`💰 New balance: ${gameState.userBalance.toFixed(3)} SOL`);
                 
             } catch (error) {
                 console.error('❌ Error placing bet:', error);
+                // Revert local balance on error
+                gameState.userBalance += amount;
+                gameState.userBet = null;
+                updateDisplay();
             }
         }
 
