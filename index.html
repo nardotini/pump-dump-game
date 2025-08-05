@@ -1027,9 +1027,52 @@
                     console.log('🎉 New user created with 10 SOL!');
                 }
                 
+                // Load global round number
+                await loadGlobalRound();
+                
                 updateDisplay();
             } catch (error) {
                 console.error('❌ Error loading balance:', error);
+            }
+        }
+
+        // Load global round number
+        async function loadGlobalRound() {
+            try {
+                const gameDoc = await db.collection('game').doc('current').get();
+                
+                if (gameDoc.exists) {
+                    const gameData = gameDoc.data();
+                    gameState.round = gameData.round || 1;
+                    console.log('🎯 Loaded global round:', gameState.round);
+                } else {
+                    // Initialize global round
+                    await db.collection('game').doc('current').set({
+                        round: 1,
+                        phase: 'betting',
+                        lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    gameState.round = 1;
+                    console.log('🎉 Initialized global round: 1');
+                }
+            } catch (error) {
+                console.error('❌ Error loading round:', error);
+                // Fallback to local round
+                gameState.round = 1;
+            }
+        }
+
+        // Save global round number
+        async function saveGlobalRound() {
+            try {
+                await db.collection('game').doc('current').update({
+                    round: gameState.round,
+                    phase: gameState.phase,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                console.log('🎯 Global round saved:', gameState.round);
+            } catch (error) {
+                console.error('❌ Error saving round:', error);
             }
         }
 
@@ -1608,6 +1651,9 @@
                         gameState.round++;
                         gameState.phase = 'betting';
                         gameState.timeLeft = 15; // OPTIMIZED: 15s betting rounds
+                        
+                        // Save global round number
+                        saveGlobalRound();
                         
                         // Use the stored result for consistency
                         const result = gameState.currentResult || (Math.random() > 0.5 ? 'PUMP' : 'DUMP');
