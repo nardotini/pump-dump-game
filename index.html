@@ -1,4 +1,32 @@
-<!DOCTYPE html>
+// Show user their win/loss result
+        function showUserResult(result) {
+            console.log(`🎯 Checking user result for: ${result}`);
+            
+            if (!gameState.userBet) {
+                console.log('ℹ️ No user bet this round');
+                return;
+            }
+            
+            const won = gameState.userBet.type === result;
+            console.log(`👤 User bet ${gameState.userBet.type}, result was ${result}, won: ${won}`);
+            
+            if (won) {
+                // Calculate winnings
+                const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
+                const totalPot = gameState.pumpPot + gameState.dumpPot;
+                const houseCut = totalPot * 0.05;
+                const winnersPool = totalPot - houseCut;
+                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
+                const payout = gameState.userBet.amount * multiplier;
+                
+                console.log(`🎉 User WON! Payout: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
+                showResultOverlay(true, payout, multiplier);
+                
+            } else {
+                console.log(`💔 User LOST! Bet: ${gameState.userBet.amount} SOL`);
+                showResultOverlay(false, gameState.userBet.amount, 0);
+            }
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1086,32 +1114,12 @@
             }
         }
 
-        // RESET GAME TO ROUND 1 (only if needed - not every refresh)
+        // RESET GAME TO ROUND 1 (only when bot starts, then keep running)
         async function resetGameToRound1() {
             try {
-                // Check if game is already running properly
-                const gameDoc = await db.collection('game').doc('current').get();
-                
-                if (gameDoc.exists) {
-                    const data = gameDoc.data();
-                    const timeSinceUpdate = Date.now() - data.lastUpdate.toMillis();
-                    
-                    // Only reset if game is stale (more than 2 minutes old)
-                    if (timeSinceUpdate < 120000) {
-                        console.log('🎯 Game is active, joining existing game...');
-                        gameState.round = data.round || 1;
-                        gameState.phase = data.phase || 'betting';
-                        gameState.timeLeft = data.timeLeft || 15;
-                        
-                        // Start syncing to existing game
-                        startRealtimeSync();
-                        return;
-                    }
-                }
-                
                 console.log('🔄 Resetting game to Round 1...');
                 
-                // Reset global game state
+                // Always reset when this function is called (bot startup)
                 await db.collection('game').doc('current').set({
                     round: 1,
                     phase: 'betting',
@@ -1138,13 +1146,14 @@
                 gameState.userBet = null;
                 gameState.roundWinner = null;
                 
-                // Start as game master
+                console.log('✅ Game reset to Round 1 complete!');
+                console.log('👑 Starting as game master...');
+                
+                // Start as game master (always running)
                 startGameMasterLoop();
                 
                 // Start real-time sync
                 startRealtimeSync();
-                
-                console.log('✅ Game reset to Round 1 complete!');
                 
             } catch (error) {
                 console.error('❌ Error resetting game:', error);
@@ -1249,25 +1258,27 @@
         // REMOVED ALL OLD UNUSED FUNCTIONS
         // loadGlobalRound, saveGlobalRound, initializeGameMaster - replaced with resetGameToRound1
 
-        // Game master controls the global timer
+        // Game master controls the global timer (ALWAYS RUNNING)
         function startGameMasterLoop() {
-            console.log('👑 Starting game master loop...');
+            console.log('👑 Starting CONTINUOUS game master loop...');
             
-            setInterval(async () => {
+            const masterInterval = setInterval(async () => {
                 try {
                     if (gameState.timeLeft > 0) {
                         gameState.timeLeft--;
-                        console.log(`⏰ Timer: ${gameState.timeLeft}s (${gameState.phase})`);
+                        if (gameState.timeLeft % 5 === 0 || gameState.timeLeft <= 3) {
+                            console.log(`⏰ Timer: ${gameState.timeLeft}s (${gameState.phase}) - Round ${gameState.round}`);
+                        }
                     } else {
                         if (gameState.phase === 'betting') {
-                            console.log('🎲 Starting reveal phase...');
+                            console.log('🎲 BETTING PHASE ENDED - Starting reveal...');
                             // Start revealing phase
                             gameState.phase = 'revealing';
                             gameState.timeLeft = 5;
                             
                             // Generate result and animate chart
                             const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
-                            console.log(`🎯 Result: ${result}`);
+                            console.log(`🎯 RESULT GENERATED: ${result}`);
                             
                             // Store result for user feedback
                             gameState.currentResult = result;
@@ -1286,11 +1297,15 @@
                             }, 2000);
                             
                         } else if (gameState.phase === 'revealing') {
-                            console.log('🔄 Starting next round...');
+                            console.log('🔄 REVEAL PHASE ENDED - Starting next round...');
                             // Start next round
+                            const previousRound = gameState.round;
                             gameState.round++;
                             gameState.phase = 'betting';
                             gameState.timeLeft = 15;
+                            
+                            // Clear user bet for new round
+                            gameState.userBet = null;
                             
                             // Update leaderboard and start new round
                             await updateLeaderboard();
@@ -1299,11 +1314,11 @@
                             // Listen to new round
                             listenToCurrentRound();
                             
-                            console.log(`🎯 Round ${gameState.round} started!`);
+                            console.log(`🎯 NEW ROUND STARTED: Round ${gameState.round} (was ${previousRound})`);
                         }
                     }
                     
-                    // Update global game state
+                    // Update global game state every second
                     await updateGlobalGameState();
                     
                 } catch (error) {
@@ -1311,30 +1326,10 @@
                 }
                 
             }, 1000);
-        }
-
-        // Show user their win/loss result
-        function showUserResult(result) {
-            if (!gameState.userBet) return;
             
-            const won = gameState.userBet.type === result;
-            
-            if (won) {
-                // Calculate winnings
-                const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
-                const totalPot = gameState.pumpPot + gameState.dumpPot;
-                const houseCut = totalPot * 0.05;
-                const winnersPool = totalPot - houseCut;
-                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
-                const payout = gameState.userBet.amount * multiplier;
-                
-                console.log(`🎉 User WON! Payout: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
-                showResultOverlay(true, payout, multiplier);
-                
-            } else {
-                console.log(`💔 User LOST! Bet: ${gameState.userBet.amount} SOL`);
-                showResultOverlay(false, gameState.userBet.amount, 0);
-            }
+            // Store interval so we can clear it if needed
+            window.gameMasterInterval = masterInterval;
+            console.log('👑 Game master loop is RUNNING CONTINUOUSLY');
         }
 
         // Update global game state in Firebase
