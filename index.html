@@ -938,6 +938,8 @@
         // User state
         let currentUser = null;
         let userWallet = null;
+        let gameStateListener = null;
+        let currentRoundListener = null;
 
         // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
@@ -945,7 +947,7 @@
         let gameState = {
             round: 1,
             phase: 'betting',
-            timeLeft: 15, // OPTIMIZED: 15s betting for more rounds per hour
+            timeLeft: 15,
             pumpPot: 0,
             dumpPot: 0,
             playerCount: 0,
@@ -955,7 +957,10 @@
             recentResults: [],
             currentResult: null,
             roundWinner: null,
-            dailyBest: { multiplier: 25.7, name: 'CryptoKing' }
+            dailyBest: { multiplier: 25.7, name: 'CryptoKing' },
+            // NEW: Real-time multiplayer data
+            activePlayers: {},
+            roundBets: { pump: {}, dump: {} }
         };
 
         // Initialize Telegram Web App + Firebase
@@ -1036,7 +1041,113 @@
             }
         }
 
-        // Load global round number
+        // Load user balance from Firebase
+        async function loadUserBalance() {
+            if (!currentUser) return;
+
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    gameState.userBalance = userData.balance || 10.0;
+                    userWallet = userData.wallet || null;
+                    console.log('💰 Loaded balance:', gameState.userBalance);
+                } else {
+                    // New user - create with 10 SOL starting balance
+                    const userName = userData?.first_name || userData?.username || 'Player';
+                    await db.collection('users').doc(currentUser.uid).set({
+                        balance: 10.0,
+                        wallet: null,
+                        name: userName,
+                        created: firebase.firestore.FieldValue.serverTimestamp(),
+                        totalWagered: 0,
+                        totalWon: 0
+                    });
+                    gameState.userBalance = 10.0;
+                    console.log('🎉 New user created with 10 SOL!');
+                }
+                
+                // Start real-time game sync
+                startRealtimeSync();
+                
+                updateDisplay();
+            } catch (error) {
+                console.error('❌ Error loading balance:', error);
+            }
+        }
+
+        // START REAL-TIME MULTIPLAYER SYNC
+        function startRealtimeSync() {
+            console.log('🌍 Starting real-time multiplayer sync...');
+            
+            // Listen to global game state
+            gameStateListener = db.collection('game').doc('current')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        
+                        // Update game state from server
+                        gameState.round = data.round || 1;
+                        gameState.phase = data.phase || 'betting';
+                        gameState.timeLeft = data.timeLeft || 15;
+                        
+                        // Calculate time since last update for accurate countdown
+                        if (data.lastUpdate) {
+                            const serverTime = data.lastUpdate.toMillis();
+                            const now = Date.now();
+                            const elapsed = Math.floor((now - serverTime) / 1000);
+                            gameState.timeLeft = Math.max(0, gameState.timeLeft - elapsed);
+                        }
+                        
+                        console.log(`🎯 Synced: Round ${gameState.round}, Phase: ${gameState.phase}, Time: ${gameState.timeLeft}s`);
+                        updateDisplay();
+                    }
+                });
+            
+            // Listen to current round bets
+            listenToCurrentRound();
+        }
+
+        // Listen to current round data
+        function listenToCurrentRound() {
+            if (currentRoundListener) {
+                currentRoundListener();
+            }
+            
+            currentRoundListener = db.collection('rounds').doc(`round_${gameState.round}`)
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        gameState.roundBets = data.bets || { pump: {}, dump: {} };
+                        gameState.activePlayers = data.players || {};
+                        
+                        // Calculate pots from real bets
+                        gameState.pumpPot = Object.values(gameState.roundBets.pump || {})
+                            .reduce((sum, bet) => sum + bet.amount, 0);
+                        gameState.dumpPot = Object.values(gameState.roundBets.dump || {})
+                            .reduce((sum, bet) => sum + bet.amount, 0);
+                        gameState.playerCount = Object.keys({...gameState.roundBets.pump, ...gameState.roundBets.dump}).length;
+                        
+                        // Check if user has bet
+                        const userPumpBet = gameState.roundBets.pump[currentUser?.uid];
+                        const userDumpBet = gameState.roundBets.dump[currentUser?.uid];
+                        
+                        if (userPumpBet) {
+                            gameState.userBet = { type: 'PUMP', amount: userPumpBet.amount };
+                        } else if (userDumpBet) {
+                            gameState.userBet = { type: 'DUMP', amount: userDumpBet.amount };
+                        } else {
+                            gameState.userBet = null;
+                        }
+                        
+                        console.log(`💰 Live pots: PUMP ${gameState.pumpPot.toFixed(3)}, DUMP ${gameState.dumpPot.toFixed(3)}`);
+                        updateDisplay();
+                    }
+                });
+        }
+
+        // Load global round number and start as game master if needed
         async function loadGlobalRound() {
             try {
                 const gameDoc = await db.collection('game').doc('current').get();
@@ -1046,33 +1157,191 @@
                     gameState.round = gameData.round || 1;
                     console.log('🎯 Loaded global round:', gameState.round);
                 } else {
-                    // Initialize global round
-                    await db.collection('game').doc('current').set({
-                        round: 1,
-                        phase: 'betting',
-                        lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    gameState.round = 1;
-                    console.log('🎉 Initialized global round: 1');
+                    // Initialize global round and become game master
+                    await initializeGameMaster();
                 }
             } catch (error) {
                 console.error('❌ Error loading round:', error);
-                // Fallback to local round
                 gameState.round = 1;
             }
         }
 
-        // Save global round number
-        async function saveGlobalRound() {
+        // Initialize as game master (first player)
+        async function initializeGameMaster() {
+            console.log('👑 Becoming game master...');
+            
+            await db.collection('game').doc('current').set({
+                round: 1,
+                phase: 'betting',
+                timeLeft: 15,
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
+                gameMaster: currentUser.uid
+            });
+            
+            gameState.round = 1;
+            gameState.phase = 'betting';
+            gameState.timeLeft = 15;
+            
+            // Start game master loop
+            startGameMasterLoop();
+            
+            console.log('👑 Game master initialized!');
+        }
+
+        // Game master controls the global timer
+        function startGameMasterLoop() {
+            setInterval(async () => {
+                if (gameState.timeLeft > 0) {
+                    gameState.timeLeft--;
+                } else {
+                    if (gameState.phase === 'betting') {
+                        // Start revealing phase
+                        gameState.phase = 'revealing';
+                        gameState.timeLeft = 5;
+                        
+                        // Generate result and save to current round
+                        const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
+                        await saveRoundResult(result);
+                        
+                    } else if (gameState.phase === 'revealing') {
+                        // Start next round
+                        gameState.round++;
+                        gameState.phase = 'betting';
+                        gameState.timeLeft = 15;
+                        
+                        // Update leaderboard and start new round
+                        await updateLeaderboard();
+                        await initializeNewRound();
+                        
+                        // Listen to new round
+                        listenToCurrentRound();
+                    }
+                }
+                
+                // Update global game state
+                await updateGlobalGameState();
+                
+            }, 1000);
+        }
+
+        // Update global game state in Firebase
+        async function updateGlobalGameState() {
             try {
                 await db.collection('game').doc('current').update({
                     round: gameState.round,
                     phase: gameState.phase,
+                    timeLeft: gameState.timeLeft,
                     lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log('🎯 Global round saved:', gameState.round);
             } catch (error) {
-                console.error('❌ Error saving round:', error);
+                console.error('❌ Error updating game state:', error);
+            }
+        }
+
+        // Save round result and process winners
+        async function saveRoundResult(result) {
+            try {
+                const roundRef = db.collection('rounds').doc(`round_${gameState.round}`);
+                const roundDoc = await roundRef.get();
+                
+                if (roundDoc.exists) {
+                    const roundData = roundDoc.data();
+                    const winners = result === 'PUMP' ? roundData.bets.pump : roundData.bets.dump;
+                    const totalPot = gameState.pumpPot + gameState.dumpPot;
+                    const houseCut = totalPot * 0.05;
+                    const winnersPool = totalPot - houseCut;
+                    const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
+                    const multiplier = winningPot > 0 ? winnersPool / winningPot : 0;
+                    
+                    // Update round with result
+                    await roundRef.update({
+                        result: result,
+                        winners: Object.keys(winners),
+                        multiplier: multiplier,
+                        totalPot: totalPot,
+                        completed: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update winner balances
+                    for (const [userId, bet] of Object.entries(winners)) {
+                        const payout = bet.amount * multiplier;
+                        await db.collection('users').doc(userId).update({
+                            balance: firebase.firestore.FieldValue.increment(payout - bet.amount)
+                        });
+                    }
+                    
+                    console.log(`🎊 Round ${gameState.round} complete: ${result}, ${multiplier.toFixed(2)}x`);
+                }
+            } catch (error) {
+                console.error('❌ Error saving round result:', error);
+            }
+        }
+
+        // Initialize new round
+        async function initializeNewRound() {
+            try {
+                await db.collection('rounds').doc(`round_${gameState.round}`).set({
+                    round: gameState.round,
+                    bets: { pump: {}, dump: {} },
+                    players: {},
+                    created: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                console.log(`🎯 New round ${gameState.round} initialized`);
+            } catch (error) {
+                console.error('❌ Error initializing round:', error);
+            }
+        }
+
+        // Update leaderboard with round winners
+        async function updateLeaderboard() {
+            try {
+                // Get completed round data
+                const roundDoc = await db.collection('rounds').doc(`round_${gameState.round}`).get();
+                
+                if (roundDoc.exists) {
+                    const data = roundDoc.data();
+                    
+                    if (data.winners && data.winners.length > 0 && data.multiplier > 1) {
+                        // Find biggest winner
+                        let biggestWinner = null;
+                        let biggestWinAmount = 0;
+                        
+                        for (const userId of data.winners) {
+                            const betData = data.result === 'PUMP' ? data.bets.pump[userId] : data.bets.dump[userId];
+                            if (betData) {
+                                const winAmount = betData.amount * data.multiplier;
+                                if (winAmount > biggestWinAmount) {
+                                    biggestWinAmount = winAmount;
+                                    biggestWinner = { userId, name: betData.name, multiplier: data.multiplier };
+                                }
+                            }
+                        }
+                        
+                        if (biggestWinner) {
+                            gameState.roundWinner = `${biggestWinner.multiplier.toFixed(1)}x ${biggestWinner.name}`;
+                            
+                            // Update daily best if higher
+                            if (biggestWinner.multiplier > gameState.dailyBest.multiplier) {
+                                gameState.dailyBest = { 
+                                    multiplier: biggestWinner.multiplier, 
+                                    name: biggestWinner.name 
+                                };
+                                
+                                // Save to Firebase
+                                await db.collection('leaderboard').doc('daily').set({
+                                    multiplier: biggestWinner.multiplier,
+                                    name: biggestWinner.name,
+                                    userId: biggestWinner.userId,
+                                    round: gameState.round,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error updating leaderboard:', error);
             }
         }
 
@@ -1544,32 +1813,45 @@
                 tg.HapticFeedback.impactOccurred('medium');
             }
             
-            gameState.userBet = {
-                type: type,
-                amount: gameState.selectedAmount
-            };
-            
-            gameState.userBalance -= gameState.selectedAmount;
-            gameState.totalPot += gameState.selectedAmount;
-            
-            // Save balance to Firebase
-            saveUserBalance();
-            
-            if (type === 'PUMP') {
-                gameState.pumpPot += gameState.selectedAmount;
-            } else {
-                gameState.dumpPot += gameState.selectedAmount;
-            }
-            
-            gameState.playerCount++;
+            // Place bet in Firebase
+            placeBetInFirebase(type, gameState.selectedAmount);
             
             const button = document.getElementById(type.toLowerCase() + 'Button');
             button.classList.add('haptic-success');
             setTimeout(() => button.classList.remove('haptic-success'), 300);
             
-            updateDisplay();
-            
             console.log(`💰 Bet placed: ${type} ${gameState.selectedAmount} SOL`);
+        }
+
+        // Place bet in Firebase (real-time multiplayer)
+        async function placeBetInFirebase(type, amount) {
+            try {
+                const userName = userData?.first_name || userData?.username || 'Player';
+                const roundRef = db.collection('rounds').doc(`round_${gameState.round}`);
+                
+                // Add bet to Firebase
+                const betPath = type === 'PUMP' ? 'bets.pump' : 'bets.dump';
+                await roundRef.set({
+                    [`${betPath}.${currentUser.uid}`]: {
+                        amount: amount,
+                        name: userName,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    },
+                    [`players.${currentUser.uid}`]: {
+                        name: userName,
+                        lastBet: firebase.firestore.FieldValue.serverTimestamp()
+                    }
+                }, { merge: true });
+                
+                // Update user balance
+                gameState.userBalance -= amount;
+                await saveUserBalance();
+                
+                console.log(`🌍 Multiplayer bet placed: ${type} ${amount} SOL`);
+                
+            } catch (error) {
+                console.error('❌ Error placing bet:', error);
+            }
         }
 
         // Create subtle particles
@@ -1776,7 +2058,8 @@
                 document.getElementById('dumpButton').addEventListener('click', () => placeBet('DUMP'));
                 
                 setTimeout(() => {
-                    simulateGame();
+                    // Don't start old simulation - using real-time sync now!
+                    // simulateGame(); // REMOVED
                     updateDisplay();
                     createParticles();
                     
@@ -1788,7 +2071,8 @@
                     
                 }, 1000);
                 
-                console.log('🚀 REAL MONEY game ready with Firebase persistence, realistic charts, and enhanced UX!');
+                console.log('🚀 REAL-TIME MULTIPLAYER game ready!');
+            }
             }
         });
     </script>
