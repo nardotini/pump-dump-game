@@ -1126,26 +1126,32 @@
         function startRealtimeSync() {
             console.log('🌍 Starting real-time multiplayer sync...');
             
-            // Listen to global game state
+            // Listen to global game state (but don't override game master)
             gameStateListener = db.collection('game').doc('current')
                 .onSnapshot((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
                         
-                        // Update game state from server
-                        gameState.round = data.round || 1;
-                        gameState.phase = data.phase || 'betting';
-                        gameState.timeLeft = data.timeLeft || 15;
-                        
-                        // Calculate time since last update for accurate countdown
-                        if (data.lastUpdate) {
-                            const serverTime = data.lastUpdate.toMillis();
-                            const now = Date.now();
-                            const elapsed = Math.floor((now - serverTime) / 1000);
-                            gameState.timeLeft = Math.max(0, gameState.timeLeft - elapsed);
+                        // Only sync if we're NOT the game master
+                        if (data.gameMaster !== currentUser.uid) {
+                            // Update game state from server
+                            gameState.round = data.round || 1;
+                            gameState.phase = data.phase || 'betting';
+                            gameState.timeLeft = data.timeLeft || 15;
+                            
+                            // Calculate time since last update for accurate countdown
+                            if (data.lastUpdate) {
+                                const serverTime = data.lastUpdate.toMillis();
+                                const now = Date.now();
+                                const elapsed = Math.floor((now - serverTime) / 1000);
+                                gameState.timeLeft = Math.max(0, gameState.timeLeft - elapsed);
+                            }
+                            
+                            console.log(`🌍 Synced: Round ${gameState.round}, Phase: ${gameState.phase}, Time: ${gameState.timeLeft}s`);
+                        } else {
+                            console.log('👑 I am game master - not syncing timer');
                         }
                         
-                        console.log(`🎯 Synced: Round ${gameState.round}, Phase: ${gameState.phase}, Time: ${gameState.timeLeft}s`);
                         updateDisplay();
                     }
                 });
@@ -2119,8 +2125,7 @@
                 
                 console.log('🚀 REAL-TIME MULTIPLAYER game ready!');
             }
-            }
-        );
+        });
     </script>
 </body>
 </html>
