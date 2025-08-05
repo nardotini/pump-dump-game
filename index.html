@@ -1,32 +1,4 @@
-// Show user their win/loss result
-        function showUserResult(result) {
-            console.log(`🎯 Checking user result for: ${result}`);
-            
-            if (!gameState.userBet) {
-                console.log('ℹ️ No user bet this round');
-                return;
-            }
-            
-            const won = gameState.userBet.type === result;
-            console.log(`👤 User bet ${gameState.userBet.type}, result was ${result}, won: ${won}`);
-            
-            if (won) {
-                // Calculate winnings
-                const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
-                const totalPot = gameState.pumpPot + gameState.dumpPot;
-                const houseCut = totalPot * 0.05;
-                const winnersPool = totalPot - houseCut;
-                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
-                const payout = gameState.userBet.amount * multiplier;
-                
-                console.log(`🎉 User WON! Payout: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
-                showResultOverlay(true, payout, multiplier);
-                
-            } else {
-                console.log(`💔 User LOST! Bet: ${gameState.userBet.amount} SOL`);
-                showResultOverlay(false, gameState.userBet.amount, 0);
-            }
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -69,7 +41,6 @@
             background: transparent;
         }
 
-        /* Compact Header - Minimal height */
         .header {
             background: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(20px);
@@ -129,7 +100,6 @@
             transform: scale(1.05);
         }
 
-        /* Wallet Menu */
         .wallet-menu {
             position: fixed;
             top: 0;
@@ -206,7 +176,6 @@
             cursor: pointer;
         }
 
-        /* Game Area - Maximum space for chart */
         .game-area {
             flex: 1;
             display: flex;
@@ -217,7 +186,6 @@
             background: transparent;
         }
 
-        /* Minimal Round Status */
         .round-status {
             background: rgba(0, 0, 0, 0.3) !important;
             border-radius: 12px;
@@ -253,7 +221,6 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
         }
 
-        /* Win/Loss Result Overlay */
         .result-overlay {
             position: fixed;
             top: 0;
@@ -327,7 +294,6 @@
             cursor: pointer;
         }
 
-        /* Leaderboard Section */
         .leaderboard-section {
             background: rgba(0, 0, 0, 0.4) !important;
             border-radius: 12px;
@@ -376,7 +342,6 @@
             color: white;
         }
 
-        /* MASSIVE CHART SECTION - This is the star! */
         .chart-section {
             background: rgba(0, 0, 0, 0.7) !important;
             border-radius: 15px;
@@ -384,12 +349,9 @@
             backdrop-filter: blur(15px);
             border: 2px solid rgba(78, 205, 196, 0.3);
             position: relative;
-            
-            /* HUGE HEIGHT - Takes up most of the screen */
             height: calc(100vh - 320px);
             min-height: 300px;
             max-height: 450px;
-            
             overflow: hidden;
             margin: 5px 0;
         }
@@ -402,7 +364,6 @@
             background: transparent;
         }
 
-        /* Enhanced chart visibility */
         #priceChart {
             background: transparent !important;
             filter: brightness(1.3) contrast(1.3) saturate(1.2);
@@ -450,7 +411,6 @@
             }
         }
 
-        /* Compact user bet status */
         .user-bet-status {
             background: rgba(255, 215, 0, 0.15) !important;
             border: 1px solid rgba(255, 215, 0, 0.3);
@@ -466,7 +426,6 @@
             display: none;
         }
 
-        /* Compact Pot Display */
         .pot-section {
             background: rgba(0, 0, 0, 0.4) !important;
             border-radius: 12px;
@@ -540,7 +499,6 @@
             color: white !important;
         }
 
-        /* Compact Bet Controls */
         .bet-controls {
             background: rgba(0, 0, 0, 0.4) !important;
             border-radius: 12px;
@@ -611,7 +569,6 @@
             font-weight: 500;
         }
 
-        /* Compact Betting Buttons */
         .betting-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -654,7 +611,6 @@
             transform: scale(0.95);
         }
 
-        /* Minimal Recent Results */
         .results-section {
             background: rgba(0, 0, 0, 0.4) !important;
             border-radius: 12px;
@@ -706,7 +662,6 @@
             color: white !important;
         }
 
-        /* Haptic feedback */
         .haptic-success {
             animation: successPulse 0.3s ease-out;
         }
@@ -717,7 +672,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Mobile optimizations */
         @media (max-width: 480px) {
             .header {
                 padding: 6px 10px;
@@ -748,7 +702,6 @@
             }
         }
 
-        /* Floating particles */
         .floating-particles {
             position: fixed;
             top: 0;
@@ -786,7 +739,6 @@
             }
         }
 
-        /* NEW: Instant transition animations */
         .round-transition {
             animation: newRoundFlash 0.5s ease-out;
         }
@@ -801,7 +753,6 @@
     <div class="floating-particles" id="particles"></div>
     
     <div class="webapp-container">
-        <!-- Compact Header -->
         <div class="header">
             <h1>🎰 Pump or Dump</h1>
             <div class="header-right">
@@ -810,15 +761,12 @@
             </div>
         </div>
 
-        <!-- Game Area -->
         <div class="game-area">
-            <!-- Minimal Round Status -->
             <div class="round-status">
                 <div class="round-number" id="roundNumber">Round #1</div>
                 <div class="phase-indicator phase-betting" id="phaseIndicator">🎯 Betting</div>
             </div>
 
-            <!-- NEW: Leaderboard Section -->
             <div class="leaderboard-section">
                 <div class="leaderboard-title">🏆 Leaderboard</div>
                 <div class="leaderboard-stats">
@@ -833,7 +781,6 @@
                 </div>
             </div>
 
-            <!-- MASSIVE CHART SECTION - THE STAR OF THE SHOW -->
             <div class="chart-section">
                 <div class="chart-overlay" id="chartOverlay" style="display: none;">
                     <div class="chart-result" id="chartResult"></div>
@@ -843,12 +790,10 @@
                 </div>
             </div>
 
-            <!-- Compact User Bet Status -->
             <div class="user-bet-status hidden" id="userBetStatus">
                 <strong id="userBetDisplay">-</strong> 🍀
             </div>
 
-            <!-- Compact Pot Display -->
             <div class="pot-section">
                 <div class="pot-title">💰 Live Pot</div>
                 <div class="pot-display">
@@ -869,9 +814,7 @@
                 </div>
             </div>
 
-            <!-- Compact Betting Controls -->
             <div class="bet-controls">
-                <!-- Bet Amount Selector -->
                 <div class="bet-amount-selector">
                     <div class="amount-btn" data-amount="0.01">0.01</div>
                     <div class="amount-btn" data-amount="0.05">0.05</div>
@@ -882,13 +825,11 @@
                     <div class="amount-btn" data-amount="2.0">2.0</div>
                 </div>
                 
-                <!-- Custom Amount -->
                 <div class="custom-amount-section">
                     <input type="number" id="customAmount" placeholder="Custom" min="0.01" max="10" step="0.01" class="custom-amount-input">
                     <button class="custom-amount-btn" id="useCustomAmount">Use</button>
                 </div>
 
-                <!-- Betting Buttons -->
                 <div class="betting-section">
                     <button class="bet-button pump" id="pumpButton" data-type="PUMP">
                         📈 PUMP
@@ -899,7 +840,6 @@
                 </div>
             </div>
 
-            <!-- Minimal Recent Results -->
             <div class="results-section">
                 <div class="results-title">📊 Recent</div>
                 <div class="results-list" id="resultsList">
@@ -909,7 +849,6 @@
         </div>
     </div>
 
-    <!-- NEW: Win/Loss Result Overlay -->
     <div class="result-overlay" id="resultOverlay">
         <div class="result-content" id="resultContent">
             <div class="result-title" id="resultTitle">🎉 YOU WON!</div>
@@ -919,7 +858,6 @@
         </div>
     </div>
 
-    <!-- NEW: Wallet Menu -->
     <div class="wallet-menu" id="walletMenu">
         <div class="wallet-content">
             <div class="wallet-title">💰 Your Wallet</div>
@@ -936,18 +874,14 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-    <!-- Solana Web3.js -->
     <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
     <script>
-        console.log('🎰 Real Money Pump or Dump Starting...');
+        console.log('🎰 CLEAN Pump or Dump Starting...');
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCm8L54hCLrR36T6eV3KAOD_8iHGyv-AJs",
             authDomain: "pump-dump-game.firebaseapp.com",
@@ -958,20 +892,15 @@
             appId: "1:455371839436:web:6be0e809019f82f3322f69"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // User state
-        let currentUser = null;
-        let userWallet = null;
-        let gameStateListener = null;
-        let currentRoundListener = null;
-
-        // Telegram Web App Integration
         const tg = window.Telegram?.WebApp;
         let userData = null;
+        let currentUser = null;
+        let userWallet = null;
+
         let gameState = {
             round: 1,
             phase: 'betting',
@@ -985,13 +914,9 @@
             recentResults: [],
             currentResult: null,
             roundWinner: null,
-            dailyBest: { multiplier: 25.7, name: 'CryptoKing' },
-            // NEW: Real-time multiplayer data
-            activePlayers: {},
-            roundBets: { pump: {}, dump: {} }
+            dailyBest: { multiplier: 25.7, name: 'CryptoKing' }
         };
 
-        // Initialize Telegram Web App + Firebase
         function initTelegramWebApp() {
             if (tg) {
                 tg.ready();
@@ -1016,21 +941,16 @@
                 userData = { first_name: 'Demo User', id: 12345 };
             }
 
-            // Initialize Firebase Authentication
             initFirebaseAuth();
         }
 
-        // Firebase Authentication - USE TELEGRAM ID
         function initFirebaseAuth() {
-            // Use Telegram user ID instead of anonymous auth
             if (userData && userData.id) {
-                // Create consistent user ID from Telegram
                 const telegramUserId = `tg_${userData.id}`;
                 currentUser = { uid: telegramUserId };
                 console.log('🔐 Using Telegram ID:', telegramUserId);
                 loadUserBalance();
             } else {
-                // Fallback to anonymous auth
                 auth.signInAnonymously()
                     .then((userCredential) => {
                         currentUser = userCredential.user;
@@ -1044,7 +964,6 @@
             }
         }
 
-        // Load user balance from Firebase
         async function loadUserBalance() {
             if (!currentUser) return;
 
@@ -1054,44 +973,8 @@
                 if (userDoc.exists) {
                     const userData = userDoc.data();
                     gameState.userBalance = userData.balance || 10.0;
-                    userWallet = userData.wallet || null;
                     console.log('💰 Loaded balance:', gameState.userBalance);
                 } else {
-                    // New user - create with 10 SOL starting balance
-                    await db.collection('users').doc(currentUser.uid).set({
-                        balance: 10.0,
-                        wallet: null,
-                        created: firebase.firestore.FieldValue.serverTimestamp(),
-                        totalWagered: 0,
-                        totalWon: 0
-                    });
-                    gameState.userBalance = 10.0;
-                    console.log('🎉 New user created with 10 SOL!');
-                }
-                
-                // Load global round number
-                await loadGlobalRound();
-                
-                updateDisplay();
-            } catch (error) {
-                console.error('❌ Error loading balance:', error);
-            }
-        }
-
-        // Load user balance from Firebase
-        async function loadUserBalance() {
-            if (!currentUser) return;
-
-            try {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    gameState.userBalance = userData.balance || 10.0;
-                    userWallet = userData.wallet || null;
-                    console.log('💰 Loaded balance:', gameState.userBalance);
-                } else {
-                    // New user - create with 10 SOL starting balance
                     const userName = userData?.first_name || userData?.username || 'Player';
                     await db.collection('users').doc(currentUser.uid).set({
                         balance: 10.0,
@@ -1105,388 +988,137 @@
                     console.log('🎉 New user created with 10 SOL!');
                 }
                 
-                // RESET GAME TO ROUND 1 ON BOT RESTART
-                await resetGameToRound1();
-                
+                await joinOrCreateGame();
                 updateDisplay();
             } catch (error) {
                 console.error('❌ Error loading balance:', error);
             }
         }
 
-        // RESET GAME TO ROUND 1 (only when bot starts, then keep running)
-        async function resetGameToRound1() {
-            try {
-                console.log('🔄 Resetting game to Round 1...');
-                
-                // Always reset when this function is called (bot startup)
-                await db.collection('game').doc('current').set({
-                    round: 1,
-                    phase: 'betting',
-                    timeLeft: 15,
-                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
-                    gameMaster: currentUser.uid
-                });
-                
-                // Initialize round 1
-                await db.collection('rounds').doc('round_1').set({
-                    round: 1,
-                    bets: { pump: {}, dump: {} },
-                    players: {},
-                    created: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Reset local state
-                gameState.round = 1;
-                gameState.phase = 'betting';
-                gameState.timeLeft = 15;
-                gameState.pumpPot = 0;
-                gameState.dumpPot = 0;
-                gameState.playerCount = 0;
-                gameState.userBet = null;
-                gameState.roundWinner = null;
-                
-                console.log('✅ Game reset to Round 1 complete!');
-                console.log('👑 Starting as game master...');
-                
-                // Start as game master (always running)
-                startGameMasterLoop();
-                
-                // Start real-time sync
-                startRealtimeSync();
-                
-            } catch (error) {
-                console.error('❌ Error resetting game:', error);
-            }
-        }
-
-        // START REAL-TIME MULTIPLAYER SYNC
-        function startRealtimeSync() {
-            console.log('🌍 Starting real-time multiplayer sync...');
-            
-            // Listen to global game state (but don't override game master)
-            gameStateListener = db.collection('game').doc('current')
-                .onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        
-                        // Only sync if we're NOT the game master
-                        if (data.gameMaster !== currentUser.uid) {
-                            // Update game state from server
-                            gameState.round = data.round || 1;
-                            gameState.phase = data.phase || 'betting';
-                            gameState.timeLeft = data.timeLeft || 15;
-                            
-                            // Calculate time since last update for accurate countdown
-                            if (data.lastUpdate) {
-                                const serverTime = data.lastUpdate.toMillis();
-                                const now = Date.now();
-                                const elapsed = Math.floor((now - serverTime) / 1000);
-                                gameState.timeLeft = Math.max(0, gameState.timeLeft - elapsed);
-                            }
-                            
-                            console.log(`🌍 Synced: Round ${gameState.round}, Phase: ${gameState.phase}, Time: ${gameState.timeLeft}s`);
-                        } else {
-                            console.log('👑 I am game master - not syncing timer');
-                        }
-                        
-                        updateDisplay();
-                    }
-                });
-            
-            // Listen to current round bets
-            listenToCurrentRound();
-        }
-
-        // Listen to current round data
-        function listenToCurrentRound() {
-            if (currentRoundListener) {
-                currentRoundListener();
-            }
-            
-            currentRoundListener = db.collection('rounds').doc(`round_${gameState.round}`)
-                .onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        gameState.roundBets = data.bets || { pump: {}, dump: {} };
-                        gameState.activePlayers = data.players || {};
-                        
-                        // Calculate pots from real bets
-                        gameState.pumpPot = Object.values(gameState.roundBets.pump || {})
-                            .reduce((sum, bet) => sum + bet.amount, 0);
-                        gameState.dumpPot = Object.values(gameState.roundBets.dump || {})
-                            .reduce((sum, bet) => sum + bet.amount, 0);
-                        gameState.playerCount = Object.keys({...gameState.roundBets.pump, ...gameState.roundBets.dump}).length;
-                        
-                        // Check if user has bet
-                        const userPumpBet = gameState.roundBets.pump[currentUser?.uid];
-                        const userDumpBet = gameState.roundBets.dump[currentUser?.uid];
-                        
-                        if (userPumpBet) {
-                            gameState.userBet = { type: 'PUMP', amount: userPumpBet.amount };
-                        } else if (userDumpBet) {
-                            gameState.userBet = { type: 'DUMP', amount: userDumpBet.amount };
-                        } else {
-                            gameState.userBet = null;
-                        }
-                        
-                        console.log(`💰 Live pots: PUMP ${gameState.pumpPot.toFixed(3)}, DUMP ${gameState.dumpPot.toFixed(3)}`);
-                        updateDisplay();
-                    }
-                });
-        }
-
-        // Load global round number and start as game master if needed
-        async function loadGlobalRound() {
+        async function joinOrCreateGame() {
             try {
                 const gameDoc = await db.collection('game').doc('current').get();
                 
                 if (gameDoc.exists) {
-                    const gameData = gameDoc.data();
-                    gameState.round = gameData.round || 1;
-                    console.log('🎯 Loaded global round:', gameState.round);
+                    const data = gameDoc.data();
+                    gameState.round = data.round || 1;
+                    gameState.phase = data.phase || 'betting';
+                    gameState.timeLeft = data.timeLeft || 15;
+                    console.log('🎯 Joined existing game - Round', gameState.round);
                 } else {
-                    // Initialize global round and become game master
-                    await initializeGameMaster();
+                    console.log('🎮 Creating new game...');
+                    await db.collection('game').doc('current').set({
+                        round: 1,
+                        phase: 'betting',
+                        timeLeft: 15,
+                        lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
+                        gameMaster: currentUser.uid
+                    });
+                    
+                    await db.collection('rounds').doc('round_1').set({
+                        round: 1,
+                        bets: { pump: {}, dump: {} },
+                        players: {},
+                        created: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    startGameMaster();
                 }
+                
+                startRealtimeSync();
             } catch (error) {
-                console.error('❌ Error loading round:', error);
-                gameState.round = 1;
+                console.error('❌ Error joining game:', error);
             }
         }
 
-        // REMOVED ALL OLD UNUSED FUNCTIONS
-        // loadGlobalRound, saveGlobalRound, initializeGameMaster - replaced with resetGameToRound1
-
-        // Game master controls the global timer (ALWAYS RUNNING)
-        function startGameMasterLoop() {
-            console.log('👑 Starting CONTINUOUS game master loop...');
+        function startGameMaster() {
+            console.log('👑 Starting as game master...');
             
-            const masterInterval = setInterval(async () => {
+            setInterval(async () => {
                 try {
                     if (gameState.timeLeft > 0) {
                         gameState.timeLeft--;
-                        if (gameState.timeLeft % 5 === 0 || gameState.timeLeft <= 3) {
-                            console.log(`⏰ Timer: ${gameState.timeLeft}s (${gameState.phase}) - Round ${gameState.round}`);
+                        if (gameState.timeLeft % 5 === 0) {
+                            console.log(`⏰ ${gameState.timeLeft}s (${gameState.phase})`);
                         }
                     } else {
                         if (gameState.phase === 'betting') {
-                            console.log('🎲 BETTING PHASE ENDED - Starting reveal...');
-                            // Start revealing phase
                             gameState.phase = 'revealing';
                             gameState.timeLeft = 5;
                             
-                            // Generate result and animate chart
                             const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
-                            console.log(`🎯 RESULT GENERATED: ${result}`);
-                            
-                            // Store result for user feedback
+                            console.log(`🎯 Result: ${result}`);
                             gameState.currentResult = result;
                             
-                            // Animate chart with result
                             if (typeof animateChart === 'function') {
                                 animateChart(result);
                             }
                             
-                            // Save result and process payouts
-                            await saveRoundResult(result);
-                            
-                            // Show user result after 2 seconds
                             setTimeout(() => {
-                                showUserResult(result);
+                                if (gameState.userBet) {
+                                    const won = gameState.userBet.type === result;
+                                    if (won) {
+                                        console.log('🎉 You won!');
+                                        showResultOverlay(true, gameState.userBet.amount * 1.5, 1.5);
+                                    } else {
+                                        console.log('💔 You lost!');
+                                        showResultOverlay(false, gameState.userBet.amount, 0);
+                                    }
+                                }
                             }, 2000);
                             
                         } else if (gameState.phase === 'revealing') {
-                            console.log('🔄 REVEAL PHASE ENDED - Starting next round...');
-                            // Start next round
-                            const previousRound = gameState.round;
                             gameState.round++;
                             gameState.phase = 'betting';
                             gameState.timeLeft = 15;
-                            
-                            // Clear user bet for new round
                             gameState.userBet = null;
                             
-                            // Update leaderboard and start new round
-                            await updateLeaderboard();
-                            await initializeNewRound();
-                            
-                            // Listen to new round
-                            listenToCurrentRound();
-                            
-                            console.log(`🎯 NEW ROUND STARTED: Round ${gameState.round} (was ${previousRound})`);
+                            console.log(`🎯 Round ${gameState.round} started`);
                         }
                     }
                     
-                    // Update global game state every second
-                    await updateGlobalGameState();
-                    
-                } catch (error) {
-                    console.error('❌ Game master loop error:', error);
-                }
-                
-            }, 1000);
-            
-            // Store interval so we can clear it if needed
-            window.gameMasterInterval = masterInterval;
-            console.log('👑 Game master loop is RUNNING CONTINUOUSLY');
-        }
-
-        // Update global game state in Firebase
-        async function updateGlobalGameState() {
-            try {
-                await db.collection('game').doc('current').update({
-                    round: gameState.round,
-                    phase: gameState.phase,
-                    timeLeft: gameState.timeLeft,
-                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            } catch (error) {
-                console.error('❌ Error updating game state:', error);
-            }
-        }
-
-        // Save round result and process winners
-        async function saveRoundResult(result) {
-            try {
-                const roundRef = db.collection('rounds').doc(`round_${gameState.round}`);
-                const roundDoc = await roundRef.get();
-                
-                if (roundDoc.exists) {
-                    const roundData = roundDoc.data();
-                    const winners = result === 'PUMP' ? (roundData.bets?.pump || {}) : (roundData.bets?.dump || {});
-                    const totalPot = gameState.pumpPot + gameState.dumpPot;
-                    const houseCut = totalPot * 0.05;
-                    const winnersPool = totalPot - houseCut;
-                    const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
-                    const multiplier = winningPot > 0 ? winnersPool / winningPot : 0;
-                    
-                    // Update round with result
-                    await roundRef.update({
-                        result: result,
-                        winners: Object.keys(winners),
-                        multiplier: multiplier,
-                        totalPot: totalPot,
-                        completed: firebase.firestore.FieldValue.serverTimestamp()
+                    await db.collection('game').doc('current').update({
+                        round: gameState.round,
+                        phase: gameState.phase,
+                        timeLeft: gameState.timeLeft,
+                        lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // Update winner balances
-                    const batch = db.batch();
-                    for (const [userId, bet] of Object.entries(winners)) {
-                        const payout = bet.amount * multiplier;
-                        const userRef = db.collection('users').doc(userId);
-                        batch.update(userRef, {
-                            balance: firebase.firestore.FieldValue.increment(payout)
-                        });
-                        console.log(`💰 Paying ${userId}: ${payout.toFixed(3)} SOL (${multiplier.toFixed(2)}x)`);
-                    }
-                    await batch.commit();
-                    
-                    // Update current user balance locally if they won
-                    if (winners[currentUser?.uid]) {
-                        const userPayout = winners[currentUser.uid].amount * multiplier;
-                        gameState.userBalance += userPayout;
-                        console.log(`💰 Your new balance: ${gameState.userBalance.toFixed(3)} SOL`);
-                    }
-                    
-                    console.log(`🎊 Round ${gameState.round} complete: ${result}, ${multiplier.toFixed(2)}x, ${Object.keys(winners).length} winners`);
+                } catch (error) {
+                    console.error('❌ Game master error:', error);
                 }
-            } catch (error) {
-                console.error('❌ Error saving round result:', error);
-            }
+            }, 1000);
         }
 
-        // Initialize new round
-        async function initializeNewRound() {
-            try {
-                await db.collection('rounds').doc(`round_${gameState.round}`).set({
-                    round: gameState.round,
-                    bets: { pump: {}, dump: {} },
-                    players: {},
-                    created: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                console.log(`🎯 New round ${gameState.round} initialized`);
-            } catch (error) {
-                console.error('❌ Error initializing round:', error);
-            }
-        }
-
-        // Update leaderboard with round winners
-        async function updateLeaderboard() {
-            try {
-                // Get completed round data
-                const roundDoc = await db.collection('rounds').doc(`round_${gameState.round}`).get();
-                
-                if (roundDoc.exists) {
-                    const data = roundDoc.data();
-                    
-                    if (data.winners && data.winners.length > 0 && data.multiplier > 1) {
-                        // Find biggest winner
-                        let biggestWinner = null;
-                        let biggestWinAmount = 0;
-                        
-                        for (const userId of data.winners) {
-                            const betData = data.result === 'PUMP' ? data.bets.pump[userId] : data.bets.dump[userId];
-                            if (betData) {
-                                const winAmount = betData.amount * data.multiplier;
-                                if (winAmount > biggestWinAmount) {
-                                    biggestWinAmount = winAmount;
-                                    biggestWinner = { userId, name: betData.name, multiplier: data.multiplier };
-                                }
-                            }
-                        }
-                        
-                        if (biggestWinner) {
-                            gameState.roundWinner = `${biggestWinner.multiplier.toFixed(1)}x ${biggestWinner.name}`;
-                            
-                            // Update daily best if higher
-                            if (biggestWinner.multiplier > gameState.dailyBest.multiplier) {
-                                gameState.dailyBest = { 
-                                    multiplier: biggestWinner.multiplier, 
-                                    name: biggestWinner.name 
-                                };
-                                
-                                // Save to Firebase
-                                await db.collection('leaderboard').doc('daily').set({
-                                    multiplier: biggestWinner.multiplier,
-                                    name: biggestWinner.name,
-                                    userId: biggestWinner.userId,
-                                    round: gameState.round,
-                                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                                });
-                            }
-                        }
+        function startRealtimeSync() {
+            db.collection('game').doc('current').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.gameMaster !== currentUser.uid) {
+                        gameState.round = data.round || 1;
+                        gameState.phase = data.phase || 'betting';
+                        gameState.timeLeft = data.timeLeft || 15;
                     }
+                    updateDisplay();
                 }
-            } catch (error) {
-                console.error('❌ Error updating leaderboard:', error);
-            }
+            });
         }
 
-        // Save user balance to Firebase
         async function saveUserBalance() {
             if (!currentUser) return;
-
             try {
                 await db.collection('users').doc(currentUser.uid).update({
                     balance: gameState.userBalance,
                     lastPlayed: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log('💾 Balance saved:', gameState.userBalance);
             } catch (error) {
                 console.error('❌ Error saving balance:', error);
             }
         }
 
-        // Wallet functions
         function openWallet() {
             document.getElementById('walletMenu').style.display = 'flex';
             document.getElementById('walletBalance').textContent = `${gameState.userBalance.toFixed(3)} SOL`;
-            
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
         }
 
         function closeWallet() {
@@ -1494,71 +1126,21 @@
         }
 
         function depositMoney() {
-            // Show deposit modal with Solana wallet integration
-            if (tg?.showPopup) {
-                tg.showPopup({
-                    title: '💎 Deposit SOL',
-                    message: `Send SOL to this address:\n\n7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv\n\nMinimum: 0.1 SOL\nBalance updates automatically!`,
-                    buttons: [
-                        {id: 'copy', type: 'default', text: '📋 Copy Address'},
-                        {id: 'close', type: 'cancel', text: 'Close'}
-                    ]
-                }, (buttonId) => {
-                    if (buttonId === 'copy') {
-                        // Copy wallet address to clipboard
-                        navigator.clipboard?.writeText('7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv');
-                        tg.showAlert('✅ Wallet address copied!');
-                    }
-                });
+            if (tg?.showAlert) {
+                tg.showAlert('💎 Deposit feature coming soon!');
             } else {
-                // Fallback for non-Telegram
-                const address = '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgHkv';
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(address);
-                    alert(`💎 Deposit Address Copied!\n\n${address}\n\nSend SOL to this address.\nMinimum: 0.1 SOL`);
-                } else {
-                    alert(`💎 Deposit SOL to:\n\n${address}\n\nMinimum: 0.1 SOL\nBalance updates automatically!`);
-                }
+                alert('💎 Deposit feature coming soon!');
             }
         }
 
         function withdrawMoney() {
-            if (gameState.userBalance < 0.1) {
-                if (tg?.showAlert) {
-                    tg.showAlert('💸 Minimum withdrawal is 0.1 SOL. Keep playing to win more!');
-                } else {
-                    alert('💸 Minimum withdrawal is 0.1 SOL. Keep playing to win more!');
-                }
-                return;
-            }
-            
-            // Show withdrawal form
-            if (tg?.showPopup) {
-                tg.showPopup({
-                    title: '💰 Withdraw SOL',
-                    message: `Available: ${gameState.userBalance.toFixed(3)} SOL\n\nEnter your Solana wallet address to withdraw.\n\nFee: 0.01 SOL\nProcessing: Instant`,
-                    buttons: [
-                        {id: 'withdraw', type: 'default', text: '💸 Enter Address'},
-                        {id: 'close', type: 'cancel', text: 'Cancel'}
-                    ]
-                }, (buttonId) => {
-                    if (buttonId === 'withdraw') {
-                        // In real implementation, show input form
-                        tg.showAlert('🚧 Withdrawal form coming soon! You\'ll be able to enter your wallet address and withdraw instantly.');
-                    }
-                });
+            if (tg?.showAlert) {
+                tg.showAlert('💸 Withdraw feature coming soon!');
             } else {
-                // Fallback for non-Telegram
-                const address = prompt('💰 Enter your Solana wallet address:');
-                if (address && address.length > 30) {
-                    alert(`✅ Withdrawal initiated!\n\nAmount: ${(gameState.userBalance - 0.01).toFixed(3)} SOL\nTo: ${address.substring(0, 20)}...\nFee: 0.01 SOL\n\n🚧 Feature coming soon!`);
-                } else if (address) {
-                    alert('❌ Invalid wallet address. Please enter a valid Solana address.');
-                }
+                alert('💸 Withdraw feature coming soon!');
             }
         }
 
-        // Win/Loss result functions
         function showResultOverlay(won, amount, multiplier) {
             const overlay = document.getElementById('resultOverlay');
             const content = document.getElementById('resultContent');
@@ -1572,59 +1154,26 @@
             if (won) {
                 title.textContent = '🎉 YOU WON!';
                 amountEl.textContent = `+${amount.toFixed(3)} SOL`;
-                
-                const messages = [
-                    'Incredible prediction! 🚀',
-                    'You nailed it! 💎',
-                    'Amazing call! 🔥',
-                    'Perfect timing! ⚡',
-                    'You\'re on fire! 🎯'
-                ];
-                message.textContent = messages[Math.floor(Math.random() * messages.length)];
-                
-                if (multiplier > 3) {
-                    message.textContent += ` ${multiplier.toFixed(1)}x multiplier!`;
-                }
+                message.textContent = 'Amazing prediction! 🚀';
             } else {
                 title.textContent = '💔 So Close!';
-                amountEl.textContent = `-${gameState.userBet.amount.toFixed(3)} SOL`;
-                
-                const messages = [
-                    'Try again! You got this! 💪',
-                    'Almost had it! Next round! 🎯',
-                    'So close! Keep going! 🚀',
-                    'Better luck next time! 🍀',
-                    'You\'ll get the next one! ⚡'
-                ];
-                message.textContent = messages[Math.floor(Math.random() * messages.length)];
+                amountEl.textContent = `-${amount.toFixed(3)} SOL`;
+                message.textContent = 'Try again! 💪';
             }
             
             overlay.style.display = 'flex';
-            
-            if (tg?.HapticFeedback) {
-                if (won) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                } else {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
-            }
         }
 
         function closeResult() {
             document.getElementById('resultOverlay').style.display = 'none';
         }
 
-        // Enhanced Chart with FIXED result sync
         const ctx = document.getElementById('priceChart').getContext('2d');
         let chart;
-        let chartStartValue = 100;
-        let chartEndValue = 100;
 
         function initChart() {
             try {
                 const data = generateChartData();
-                chartStartValue = data.values[0];
-                chartEndValue = data.values[data.values.length - 1];
                 
                 chart = new Chart(ctx, {
                     type: 'line',
@@ -1638,37 +1187,21 @@
                             borderWidth: 5,
                             fill: true,
                             tension: 0.4,
-                            pointRadius: 0,
-                            pointHoverRadius: 10,
-                            pointBackgroundColor: '#4ecdc4',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 3
+                            pointRadius: 0
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { 
-                            legend: { display: false }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: { 
-                            x: { 
-                                display: false,
-                                grid: { display: false }
-                            }, 
-                            y: { 
-                                display: false,
-                                grid: { display: false }
-                            }
-                        },
-                        elements: {
-                            point: { radius: 0 }
+                            x: { display: false },
+                            y: { display: false }
                         },
                         animation: { duration: 0 }
                     }
                 });
                 
-                console.log('📊 Chart initialized with FIXED sync');
                 return true;
             } catch (error) {
                 console.error('❌ Chart error:', error);
@@ -1679,11 +1212,11 @@
         function generateChartData() {
             const labels = [];
             const values = [];
-            let currentPrice = 80 + Math.random() * 40; // Start between 80-120
+            let currentPrice = 100;
             
             for (let i = 0; i < 60; i++) {
                 labels.push(i);
-                const change = (Math.random() - 0.5) * 6;
+                const change = (Math.random() - 0.5) * 8;
                 currentPrice += change;
                 currentPrice = Math.max(40, Math.min(160, currentPrice));
                 values.push(currentPrice);
@@ -1692,84 +1225,20 @@
             return { labels, values };
         }
 
-        function moveChart() {
-            if (!chart || gameState.phase !== 'betting') return;
-            
-            try {
-                const currentData = [...chart.data.datasets[0].data];
-                const lastValue = currentData[currentData.length - 1];
-                const change = (Math.random() - 0.5) * 8;
-                const newValue = Math.max(20, Math.min(180, lastValue + change));
-                
-                currentData.shift();
-                currentData.push(newValue);
-                
-                chart.data.datasets[0].data = currentData;
-                chartEndValue = newValue; // Track the current end value
-                
-                // Update colors based on movement
-                if (newValue > lastValue) {
-                    chart.data.datasets[0].borderColor = '#4ecdc4';
-                    chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.25)';
-                } else {
-                    chart.data.datasets[0].borderColor = '#ff6b6b';
-                    chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 107, 0.25)';
-                }
-                
-                chart.update('none');
-            } catch (error) {
-                console.error('Chart movement error:', error);
-            }
-        }
-
         function animateChart(finalResult) {
             if (!chart) return;
             
-            // OPTION B: Realistic Movement Constraints for fairness
             const startData = [...chart.data.datasets[0].data];
             const initialValue = startData[Math.floor(startData.length * 0.6)];
-            const currentTrend = startData[startData.length - 1] - startData[startData.length - 10];
             
             let step = 0;
             const totalSteps = 10;
             let finalValue;
             
-            // REALISTIC CONSTRAINTS: Check if result makes sense with current trend
-            const trendStrength = Math.abs(currentTrend);
-            const isGoingUp = currentTrend > 0;
-            const isGoingDown = currentTrend < 0;
-            
-            // If strong trend exists, respect it more often for realism
-            let actualResult = finalResult;
-            if (trendStrength > 15) { // Strong trend detected
-                if (isGoingUp && finalResult === 'DUMP' && Math.random() < 0.3) {
-                    // 30% chance to override unrealistic DUMP when strongly trending up
-                    actualResult = 'PUMP';
-                    console.log('🎯 Realistic override: Strong uptrend, switched to PUMP');
-                } else if (isGoingDown && finalResult === 'PUMP' && Math.random() < 0.3) {
-                    // 30% chance to override unrealistic PUMP when strongly trending down
-                    actualResult = 'DUMP';
-                    console.log('🎯 Realistic override: Strong downtrend, switched to DUMP');
-                }
-            }
-            
-            // Set realistic target based on actual result and current trend
-            if (actualResult === 'PUMP') {
-                if (isGoingUp) {
-                    // Continue the uptrend naturally
-                    finalValue = initialValue + 20 + Math.random() * 30;
-                } else {
-                    // Reverse downtrend (more dramatic but realistic)
-                    finalValue = initialValue + 15 + Math.random() * 25;
-                }
+            if (finalResult === 'PUMP') {
+                finalValue = initialValue + 25 + Math.random() * 40;
             } else {
-                if (isGoingDown) {
-                    // Continue the downtrend naturally
-                    finalValue = initialValue - 20 - Math.random() * 30;
-                } else {
-                    // Reverse uptrend (more dramatic but realistic)
-                    finalValue = initialValue - 15 - Math.random() * 25;
-                }
+                finalValue = initialValue - 25 - Math.random() * 40;
             }
             
             const interval = setInterval(() => {
@@ -1782,47 +1251,26 @@
                         const progressToFinal = (i - Math.floor(startData.length * 0.6)) / (startData.length - Math.floor(startData.length * 0.6));
                         const targetValue = baseValue + (finalValue - baseValue) * progressToFinal;
                         
-                        // REALISTIC VOLATILITY: Less jarring movements
                         let volatility;
                         if (progress > 0.8) {
-                            // Final 20% - minimal volatility for clear result
                             volatility = (Math.random() - 0.5) * 4;
-                        } else if (progress > 0.5) {
-                            // Middle phase - moderate volatility
-                            volatility = (Math.random() - 0.5) * 12 * (1 - progress * 0.5);
                         } else {
-                            // Early phase - normal volatility
                             volatility = (Math.random() - 0.5) * 16 * (1 - progress * 0.3);
                         }
                         
-                        // SMOOTH REALISTIC MOVEMENT: More natural acceleration
                         const smoothMovement = baseValue + (targetValue - baseValue) * Math.pow(progress, 0.7);
-                        
                         newData[i] = Math.max(10, Math.min(190, smoothMovement + volatility));
                     }
                     
                     chart.data.datasets[0].data = newData;
-                    
-                    // Set colors to match actual result (more pronounced in final steps)
-                    if (actualResult === 'PUMP') {
-                        chart.data.datasets[0].borderColor = progress > 0.7 ? '#4ecdc4' : '#4ecdc4';
-                        chart.data.datasets[0].backgroundColor = `rgba(78, 205, 196, ${0.2 + progress * 0.3})`;
-                    } else {
-                        chart.data.datasets[0].borderColor = progress > 0.7 ? '#ff6b6b' : '#ff6b6b';
-                        chart.data.datasets[0].backgroundColor = `rgba(255, 107, 107, ${0.2 + progress * 0.3})`;
-                    }
-                    
-                    chart.data.datasets[0].borderWidth = 6 + (progress * 2);
+                    chart.data.datasets[0].borderColor = finalResult === 'PUMP' ? '#4ecdc4' : '#ff6b6b';
+                    chart.data.datasets[0].backgroundColor = finalResult === 'PUMP' ? 'rgba(78, 205, 196, 0.4)' : 'rgba(255, 107, 107, 0.4)';
                     chart.update('none');
                     step++;
                     
                     if (step >= totalSteps) {
                         clearInterval(interval);
-                        showResult(actualResult); // Show the actual (possibly adjusted) result
-                        
-                        // Store actual result for syncing
-                        gameState.currentResult = actualResult;
-                        chartEndValue = newData[newData.length - 1];
+                        showResult(finalResult);
                     }
                 } catch (error) {
                     clearInterval(interval);
@@ -1839,28 +1287,15 @@
             
             overlay.style.display = 'block';
             
-            // Show result for 1.5 seconds (faster)
             setTimeout(() => {
                 overlay.style.display = 'none';
             }, 1500);
         }
 
-        // Game logic
         function updateDisplay() {
             document.getElementById('roundNumber').textContent = `Round #${gameState.round}`;
             document.getElementById('timer').textContent = `${gameState.timeLeft}s`;
             document.getElementById('userBalance').textContent = `${gameState.userBalance.toFixed(3)} SOL`;
-            
-            const total = gameState.pumpPot + gameState.dumpPot;
-            const pumpPercent = total > 0 ? ((gameState.pumpPot / total) * 100).toFixed(1) : 0;
-            const dumpPercent = total > 0 ? ((gameState.dumpPot / total) * 100).toFixed(1) : 0;
-            
-            document.getElementById('pumpAmount').textContent = gameState.pumpPot.toFixed(3);
-            document.getElementById('dumpAmount').textContent = gameState.dumpPot.toFixed(3);
-            document.getElementById('pumpPercent').textContent = `${pumpPercent}%`;
-            document.getElementById('dumpPercent').textContent = `${dumpPercent}%`;
-            document.getElementById('playerCount').textContent = gameState.playerCount;
-            document.getElementById('totalPot').textContent = total.toFixed(3);
             
             const phaseIndicator = document.getElementById('phaseIndicator');
             phaseIndicator.className = `phase-indicator phase-${gameState.phase}`;
@@ -1887,31 +1322,6 @@
             } else {
                 betStatus.classList.add('hidden');
             }
-
-            // Update leaderboard
-            document.getElementById('roundWinner').textContent = gameState.roundWinner || '-';
-            document.getElementById('dailyWinner').textContent = `${gameState.dailyBest.multiplier}x ${gameState.dailyBest.name}`;
-        }
-
-        function updateRecentResults() {
-            const container = document.getElementById('resultsList');
-            container.innerHTML = '';
-            
-            if (gameState.recentResults.length === 0) {
-                container.innerHTML = '<div class="loading">No results yet...</div>';
-                return;
-            }
-            
-            gameState.recentResults.slice(0, 5).forEach(result => {
-                const div = document.createElement('div');
-                div.className = `result-item ${result.result.toLowerCase()}`;
-                div.innerHTML = `
-                    <span>#${result.round}</span>
-                    <span>${result.result === 'PUMP' ? '📈' : '📉'}</span>
-                    <span>${result.pot}</span>
-                `;
-                container.appendChild(div);
-            });
         }
 
         function placeBet(type) {
@@ -1920,67 +1330,27 @@
             }
             
             if (gameState.userBalance < gameState.selectedAmount) {
-                if (tg?.showAlert) {
-                    tg.showAlert(`Need ${gameState.selectedAmount} SOL!`);
-                } else {
-                    alert(`Need ${gameState.selectedAmount} SOL!`);
-                }
+                alert(`Need ${gameState.selectedAmount} SOL!`);
                 return;
             }
             
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
+            gameState.userBet = {
+                type: type,
+                amount: gameState.selectedAmount
+            };
             
-            // Place bet in Firebase
-            placeBetInFirebase(type, gameState.selectedAmount);
+            gameState.userBalance -= gameState.selectedAmount;
+            saveUserBalance();
+            
+            console.log(`✅ Bet placed: ${type} ${gameState.selectedAmount} SOL`);
             
             const button = document.getElementById(type.toLowerCase() + 'Button');
             button.classList.add('haptic-success');
             setTimeout(() => button.classList.remove('haptic-success'), 300);
             
-            console.log(`💰 Bet placed: ${type} ${gameState.selectedAmount} SOL`);
+            updateDisplay();
         }
 
-        // Place bet in Firebase (real-time multiplayer)
-        async function placeBetInFirebase(type, amount) {
-            try {
-                const userName = userData?.first_name || userData?.username || 'Player';
-                const roundRef = db.collection('rounds').doc(`round_${gameState.round}`);
-                
-                console.log(`🎯 Placing bet: ${type} ${amount} SOL in round ${gameState.round}`);
-                
-                // Add bet to Firebase
-                const betPath = type === 'PUMP' ? 'bets.pump' : 'bets.dump';
-                await roundRef.set({
-                    [`${betPath}.${currentUser.uid}`]: {
-                        amount: amount,
-                        name: userName,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    },
-                    [`players.${currentUser.uid}`]: {
-                        name: userName,
-                        lastBet: firebase.firestore.FieldValue.serverTimestamp()
-                    }
-                }, { merge: true });
-                
-                // Update user balance locally and in Firebase
-                gameState.userBalance -= amount;
-                await saveUserBalance();
-                
-                console.log(`✅ Bet placed successfully: ${type} ${amount} SOL`);
-                console.log(`💰 New balance: ${gameState.userBalance.toFixed(3)} SOL`);
-                
-            } catch (error) {
-                console.error('❌ Error placing bet:', error);
-                // Revert local balance on error
-                gameState.userBalance += amount;
-                gameState.userBet = null;
-                updateDisplay();
-            }
-        }
-
-        // Create subtle particles
         function createParticles() {
             const container = document.getElementById('particles');
             
@@ -2001,158 +1371,20 @@
             }, 300);
         }
 
-        // Round transition animation
-        function showRoundTransition() {
-            const roundStatus = document.querySelector('.round-status');
-            roundStatus.classList.add('round-transition');
-            setTimeout(() => {
-                roundStatus.classList.remove('round-transition');
-            }, 500);
-        }
-
-        // ENHANCED: Game simulation with results tracking
-        function simulateGame() {
-            setInterval(() => {
-                if (gameState.timeLeft > 0) {
-                    gameState.timeLeft--;
-                } else {
-                    if (gameState.phase === 'betting') {
-                        // Start revealing phase - 5 seconds for lightning fast reveals!
-                        gameState.phase = 'revealing';
-                        gameState.timeLeft = 5;
-                        
-                        // Generate result (slightly favor PUMP for excitement)
-                        const result = Math.random() > 0.48 ? 'PUMP' : 'DUMP';
-                        animateChart(result);
-                        
-                        // Calculate and show user result
-                        if (gameState.userBet) {
-                            const won = gameState.userBet.type === result;
-                            if (won) {
-                                const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
-                                const totalPot = gameState.pumpPot + gameState.dumpPot;
-                                const houseCut = totalPot * 0.05;
-                                const winnersPool = totalPot - houseCut;
-                                const multiplier = winningPot > 0 ? winnersPool / winningPot : 1;
-                                const payout = gameState.userBet.amount * multiplier;
-                                
-                                gameState.userBalance += payout;
-                                
-                                // Save balance to Firebase
-                                saveUserBalance();
-                                
-                                // Show win overlay after 1.5 seconds (faster timing)
-                                setTimeout(() => {
-                                    showResultOverlay(true, payout, multiplier);
-                                }, 1500);
-                                
-                            } else {
-                                // Show loss overlay after 1.5 seconds (faster timing)
-                                setTimeout(() => {
-                                    showResultOverlay(false, gameState.userBet.amount, 0);
-                                }, 1500);
-                            }
-                        }
-                        
-                    } else if (gameState.phase === 'revealing') {
-                        // INSTANT TRANSITION to next round
-                        gameState.round++;
-                        gameState.phase = 'betting';
-                        gameState.timeLeft = 15; // OPTIMIZED: 15s betting rounds
-                        
-                        // Save global round number
-                        saveGlobalRound();
-                        
-                        // Use the stored result for consistency
-                        const result = gameState.currentResult || (Math.random() > 0.5 ? 'PUMP' : 'DUMP');
-                        
-                        // Calculate round winner
-                        const totalPot = gameState.pumpPot + gameState.dumpPot;
-                        if (totalPot > 0) {
-                            const winningPot = result === 'PUMP' ? gameState.pumpPot : gameState.dumpPot;
-                            const multiplier = winningPot > 0 ? (totalPot * 0.95) / winningPot : 0;
-                            
-                            if (multiplier > 1) {
-                                gameState.roundWinner = `${multiplier.toFixed(1)}x Someone`;
-                                
-                                // Update daily best if this is higher
-                                if (multiplier > gameState.dailyBest.multiplier) {
-                                    gameState.dailyBest = { multiplier: multiplier, name: 'Someone' };
-                                }
-                            }
-                        }
-                        
-                        // Add result to history
-                        gameState.recentResults.unshift({
-                            round: gameState.round - 1,
-                            result: result,
-                            pot: totalPot.toFixed(2)
-                        });
-                        
-                        
-                        // Reset for new round
-                        gameState.pumpPot = 0;
-                        gameState.dumpPot = 0;
-                        gameState.playerCount = 0;
-                        gameState.userBet = null;
-                        gameState.currentResult = null;
-                        
-                        // Update displays
-                        updateRecentResults();
-                        showRoundTransition();
-                        
-                        // Generate new chart
-                        if (chart) {
-                            const newData = generateChartData();
-                            chart.data.datasets[0].data = newData.values;
-                            chart.data.datasets[0].borderColor = '#4ecdc4';
-                            chart.data.datasets[0].backgroundColor = 'rgba(78, 205, 196, 0.2)';
-                            chart.data.datasets[0].borderWidth = 5;
-                            chart.update();
-                        }
-                        
-                        console.log('🚀 INSTANT ROUND TRANSITION with Firebase persistence!');
-                    }
-                }
-                
-                // Simulate other players betting during betting phase
-                if (gameState.phase === 'betting' && Math.random() < 0.5) {
-                    const betAmount = 0.05 + Math.random() * 2;
-                    if (Math.random() > 0.5) {
-                        gameState.pumpPot += betAmount;
-                    } else {
-                        gameState.dumpPot += betAmount;
-                    }
-                    gameState.playerCount = Math.max(gameState.playerCount, Math.floor(Math.random() * 25) + 1);
-                }
-                
-                updateDisplay();
-            }, 1000);
-        }
-
-        // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
             initTelegramWebApp();
             
             if (initChart()) {
-                console.log('✅ Real Money game with Firebase ready');
+                console.log('✅ Game ready');
                 
-                // Amount selection buttons
                 document.querySelectorAll('.amount-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         gameState.selectedAmount = parseFloat(btn.dataset.amount);
-                        
-                        document.getElementById('customAmount').value = '';
-                        
-                        if (tg?.HapticFeedback) {
-                            tg.HapticFeedback.impactOccurred('light');
-                        }
                     });
                 });
                 
-                // Custom amount functionality
                 document.getElementById('useCustomAmount').addEventListener('click', () => {
                     const customInput = document.getElementById('customAmount');
                     const customValue = parseFloat(customInput.value);
@@ -2160,23 +1392,8 @@
                     if (customValue && customValue >= 0.01 && customValue <= 10) {
                         document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
                         gameState.selectedAmount = customValue;
-                        
-                        document.getElementById('useCustomAmount').style.background = 'rgba(78, 205, 196, 0.3)';
-                        setTimeout(() => {
-                            document.getElementById('useCustomAmount').style.background = 'rgba(255, 215, 0, 0.2)';
-                        }, 300);
-                        
-                        if (tg?.HapticFeedback) {
-                            tg.HapticFeedback.impactOccurred('medium');
-                        }
-                        
-                        console.log(`Custom amount set: ${customValue} SOL`);
                     } else {
-                        if (tg?.showAlert) {
-                            tg.showAlert('Enter 0.01 to 10 SOL');
-                        } else {
-                            alert('Enter 0.01 to 10 SOL');
-                        }
+                        alert('Enter 0.01 to 10 SOL');
                     }
                 });
                 
@@ -2184,20 +1401,9 @@
                 document.getElementById('dumpButton').addEventListener('click', () => placeBet('DUMP'));
                 
                 setTimeout(() => {
-                    // Don't start old simulation - using real-time sync now!
-                    // simulateGame(); // REMOVED
                     updateDisplay();
                     createParticles();
-                    
-                    setInterval(() => {
-                        if (gameState.phase === 'betting') {
-                            moveChart();
-                        }
-                    }, 600);
-                    
                 }, 1000);
-                
-                console.log('🚀 REAL-TIME MULTIPLAYER game ready!');
             }
         });
     </script>
